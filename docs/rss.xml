@@ -1,2 +1,22 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>马越's Blog</title><link>https://nexor-source.github.io</link><description>记录学习生活</description><copyright>马越's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://nexor-source.github.io</link></image><lastBuildDate>Tue, 12 Nov 2024 11:19:01 +0000</lastBuildDate><managingEditor>马越's Blog</managingEditor><ttl>60</ttl><webMaster>马越's Blog</webMaster><item><title>sd </title><link>https://nexor-source.github.io/post/sd%20.html</link><description>sd asd 。</description><guid isPermaLink="true">https://nexor-source.github.io/post/sd%20.html</guid><pubDate>Mon, 11 Nov 2024 14:52:56 +0000</pubDate></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>马越's Blog</title><link>https://nexor-source.github.io</link><description>记录学习生活</description><copyright>马越's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://nexor-source.github.io</link></image><lastBuildDate>Wed, 20 Nov 2024 19:24:41 +0000</lastBuildDate><managingEditor>马越's Blog</managingEditor><ttl>60</ttl><webMaster>马越's Blog</webMaster><item><title>Gecko: Resource-Efficient and Accurate Queries in Real-Time Video Streams at the Edge</title><link>https://nexor-source.github.io/post/Gecko-%20Resource-Efficient%20and%20Accurate%20Queries%20in%20Real-Time%20Video%20Streams%20at%20the%20Edge.html</link><description>## 摘要：&#13;
+&#13;
+针对分布式摄像头系统进行对象查询任务的一个系统 Gecko ，于边上实时运行&#13;
+&#13;
+#### 主要特点：&#13;
+&#13;
+(i) 能提取特征并选择对应的模型分配给边缘设备&#13;
+&#13;
+(ii) 运行时能够动态调整帧查询间隔，并且支持在边缘设备上进行模型的合并和分支&#13;
+&#13;
+(iii) 改变视频分辨率来调整查找准确性（流转移和模型连续学习）&#13;
+&#13;
+## 背景介绍：&#13;
+&#13;
+为了能够实时进行物体查询，大部分模型都是减少了DNN的复杂性来换取实时性，从而降低了模型识别的准确性&#13;
+&#13;
+SurveilEdge，Video-zilla之类的方法尝试通过云边协同来实现实时处理，但他们（以及其他类似的工作）都没有注意到以下几点来增加资源利用率：&#13;
+&#13;
+1. **多摄像头间的模型共享**：类似SurveilEdge这样的方法只关注了单视频流查询的优化，而在**多视频流查询**中我们很容易可以将**相同对象**视频流查询的工作使用相同的模型处理，也就是**共享模型**以实现资源利用率的提高&#13;
+2. 实时查询资源消耗大，为了保证高精度和低延迟需要有对应的分配策略&#13;
+3. 查询应当适应视频的内容：(1)因为即便是针对某种物体进行检测，各种轻量级模型之间的性能波动还是会比较大，所以需要选择表现最好的模型来检测。</description><guid isPermaLink="true">https://nexor-source.github.io/post/Gecko-%20Resource-Efficient%20and%20Accurate%20Queries%20in%20Real-Time%20Video%20Streams%20at%20the%20Edge.html</guid><pubDate>Wed, 20 Nov 2024 19:24:19 +0000</pubDate></item><item><title>sd </title><link>https://nexor-source.github.io/post/sd%20.html</link><description>sd asd 。</description><guid isPermaLink="true">https://nexor-source.github.io/post/sd%20.html</guid><pubDate>Mon, 11 Nov 2024 14:52:56 +0000</pubDate></item></channel></rss>
