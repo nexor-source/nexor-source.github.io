@@ -1,4 +1,3 @@
-# Crucio: End-to-End Coordinated Spatio-Temporal Redundancy Elimination for Fast Video Analytics
 
 第一作者和通讯作者：AnDong Zhu（PhD）Sheng Zhang（Associate Professor）
 
