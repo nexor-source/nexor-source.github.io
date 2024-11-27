@@ -1,5 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>马越's Blog</title><link>https://nexor-source.github.io</link><description>记录学习生活</description><copyright>马越's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://nexor-source.github.io</link></image><lastBuildDate>Wed, 20 Nov 2024 19:29:17 +0000</lastBuildDate><managingEditor>马越's Blog</managingEditor><ttl>60</ttl><webMaster>马越's Blog</webMaster><item><title>Gecko: Resource-Efficient and Accurate Queries in Real-Time Video Streams at the Edge</title><link>https://nexor-source.github.io/post/Gecko-%20Resource-Efficient%20and%20Accurate%20Queries%20in%20Real-Time%20Video%20Streams%20at%20the%20Edge.html</link><description>## 摘要：&#13;
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>马越's Blog</title><link>https://nexor-source.github.io</link><description>记录学习生活</description><copyright>马越's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://nexor-source.github.io</link></image><lastBuildDate>Wed, 27 Nov 2024 22:50:56 +0000</lastBuildDate><managingEditor>马越's Blog</managingEditor><ttl>60</ttl><webMaster>马越's Blog</webMaster><item><title>Gecko: Resource-Efficient and Accurate Queries in Real-Time Video Streams at the Edge</title><link>https://nexor-source.github.io/post/Gecko-%20Resource-Efficient%20and%20Accurate%20Queries%20in%20Real-Time%20Video%20Streams%20at%20the%20Edge.html</link><description># Gecko: Resource-Efficient and Accurate Queries in Real-Time Video Streams at the Edge&#13;
+&#13;
+第一作者：Liang Wang（华中科技大学）&#13;
+&#13;
+通讯作者：Jianzong Wang（深圳平安科技）Guokuan Li（华中科技大学）&#13;
+&#13;
+学校：华中科技大学（一作），深圳平安科技公司，香港科技大学&#13;
+&#13;
+## 摘要：&#13;
 &#13;
 针对分布式摄像头系统进行对象查询任务的一个系统 Gecko ，于边上实时运行&#13;
 &#13;

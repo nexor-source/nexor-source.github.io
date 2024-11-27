@@ -10,7 +10,15 @@
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
     </script>
-<meta name="description" content="## 摘要：
+<meta name="description" content="# Gecko: Resource-Efficient and Accurate Queries in Real-Time Video Streams at the Edge
+
+第一作者：Liang Wang（华中科技大学）
+
+通讯作者：Jianzong Wang（深圳平安科技）Guokuan Li（华中科技大学）
+
+学校：华中科技大学（一作），深圳平安科技公司，香港科技大学
+
+## 摘要：
 
 针对分布式摄像头系统进行对象查询任务的一个系统 Gecko ，于边上实时运行
 
@@ -32,7 +40,15 @@ SurveilEdge，Video-zilla之类的方法尝试通过云边协同来实现实时�
 2. 实时查询资源消耗大，为了保证高精度和低延迟需要有对应的分配策略
 3. 查询应当适应视频的内容：(1)因为即便是针对某种物体进行检测，各种轻量级模型之间的性能波动还是会比较大，所以需要选择表现最好的模型来检测。">
 <meta property="og:title" content="Gecko: Resource-Efficient and Accurate Queries in Real-Time Video Streams at the Edge">
-<meta property="og:description" content="## 摘要：
+<meta property="og:description" content="# Gecko: Resource-Efficient and Accurate Queries in Real-Time Video Streams at the Edge
+
+第一作者：Liang Wang（华中科技大学）
+
+通讯作者：Jianzong Wang（深圳平安科技）Guokuan Li（华中科技大学）
+
+学校：华中科技大学（一作），深圳平安科技公司，香港科技大学
+
+## 摘要：
 
 针对分布式摄像头系统进行对象查询任务的一个系统 Gecko ，于边上实时运行
 
@@ -113,7 +129,11 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 </div>
     <div id="content">
-<div class="markdown-body" id="postBody"><h2>摘要：</h2>
+<div class="markdown-body" id="postBody"><h1>Gecko: Resource-Efficient and Accurate Queries in Real-Time Video Streams at the Edge</h1>
+<p>第一作者：Liang Wang（华中科技大学）</p>
+<p>通讯作者：Jianzong Wang（深圳平安科技）Guokuan Li（华中科技大学）</p>
+<p>学校：华中科技大学（一作），深圳平安科技公司，香港科技大学</p>
+<h2>摘要：</h2>
 <p>针对分布式摄像头系统进行对象查询任务的一个系统 Gecko ，于边上实时运行</p>
 <h4>主要特点：</h4>
 <p>(i) 能提取特征并选择对应的模型分配给边缘设备</p>
@@ -184,12 +204,11 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p>Gecko根据提取到的特征，调用模型选择函数（serverless）从云端共享模型库中选择合适的模型。</p>
 <ul>
 <li>
-<strong>模型选择函数A(model,feature)是一个6层的神经网络</strong>，每个隐藏层都有256个节点，由于特征维度差距很大，所以对每个特征在第一层都会用全连接层进行特征映射融合，映射到256维，最后<strong>输出层节点个数就是模型个数，对应每个模型的准确率分数</strong>，每次添加新的模型的时候输出层新建节点并且只训练新节点的连接权重（<em>这个serverless函数是怎么训练的？）</em>
-</li>
+<strong>模型选择函数A(model,feature)是一个6层的神经网络</strong>，每个隐藏层都有256个节点，由于特征维度差距很大，所以对每个特征在第一层都会用全连接层进行特征映射融合，映射到256维，最后<strong>输出层节点个数就是模型个数，对应每个模型的准确率分数</strong>，每次添加新的模型的时候输出层新建节点并且只训练新节点的连接权重（<em>这个serverless函数是怎么训练的？</em> 通过离线实验，并且非输出层的专家权重不会改变）</li>
 </ul>
 </li>
 <li>
-<p>调度器（Scheduler）调度模型到合适的边缘设备*（模型的大小不是好几个GB吗）*，并将一个或多个视频流给到对应的模型上开始查询</p>
+<p>调度器（Scheduler）调度模型到合适的边缘设备*（模型的大小不是好几个GB吗*否！轻量级的模型MB已经是大小的极限，因此传输非常快速便捷），并将一个或多个视频流给到对应的模型上开始查询</p>
 <ul>
 <li>调度策略：每个模型都有绑定的元数据记录着模型占用GPU资源大小以及对每个额外视频流所需要的处理资源，Gecko的Scheduler只考虑空间资源大小问题，将等待执行的model按照资源需求<strong>从小到大排序，然后依次分配给<em>最空闲</em>的设备</strong>。</li>
 </ul>
@@ -223,11 +242,11 @@ $F$是所有特征的集合，$k_f$是$f$的维度。如果连续多次计算得
 </li>
 <li>
 <p><strong>连续学习：困难样本挖掘器（Hard Example Miner）会挖掘困难样本帧，触发serverless模型的再训练</strong>。具体来说，模型对于每个预测的物体都有一个置信概率$bbox.score$，给定$(\theta_L, \theta_M, \theta_H)$三个阈值和一个图像阈值$\lambda$，如果有预测物体的$bbox.score$处于$(\theta_L, \theta_M)$之间，则直接将该帧认定为困难样本帧。如果没有物体的$bbox.score$处于$(\theta_L, \theta_M)$区间中，则统计所有$bbox.score$处于$(\theta_M,\theta_H)$之间的物体的数量$m$，若共有$n$个检测物体，则判断$\frac{m}{n}\ge(1-\lambda)$，如果为真则说明有大量物体的检测还是不太准确，因此仍然认定此帧为困难样本帧。$(\theta_L, \theta_M, \theta_H, \lambda)$这四个参数都是根据经验选择的。</p>
+<p>当困难样本帧积攒的数量超过阈值时，会使用一个非常厉害的黄金模型来标定这些困难样本帧，随后给对应的模型当训练集进行训练，训练集的一小部分还会被替换成之前的历史训练数据以防遗忘。如果新模型准确率高于之前的模型，则将其在边缘设备上进行替换，并且加入到模型集合中，更新模型精度预测器。</p>
 </li>
 </ul>
 </li>
 </ol>
-<p>当困难样本帧积攒的数量超过阈值时，会使用一个非常厉害的黄金模型来标定这些困难样本帧，随后给对应的模型当训练集进行训练，训练集的一小部分还会被替换成之前的历史训练数据以防遗忘。如果新模型准确率高于之前的模型，则将其在边缘设备上进行替换，并且加入到模型集合中，更新模型精度预测器。</p>
 <h2>评估</h2>
 <h4>实验设置</h4>
 <p>特征提取器，跳帧控制器，困难样本挖掘器都是使用pyTorch来实现的神经网络模型。边缘端实现使用了DeepStream SDK来实现运行时视频流的附着和分离，非边缘端实现基于阿里云的serverless计算平台。</p>
@@ -255,7 +274,14 @@ $F$是所有特征的集合，$k_f$是$f$的维度。如果连续多次计算得
 <li>针对数据漂移 的 连续学习机制（收集综合置信概率低的视频帧定量进行重复训练）</li>
 </ul>
 <h2>感想</h2>
-<p>论文针对视频流对象查询系统提出了多种机制和方法来优化效率和准确度，单看每个机制感觉并不难，而堆砌在一起作为整个系统的优化则较为完整。在自己未来的方法中也可以使用类似的做法，加入轻量型的模型在基本不影响效率的情况下通过简单的机制来进行一定程度的优化。</p></div>
+<p>论文针对视频流对象查询系统提出了多种机制和方法来优化效率和准确度，单看每个机制感觉并不难，而堆砌在一起作为整个系统的优化则较为完整。在自己未来的方法中也可以使用类似的做法，加入轻量型的模型在基本不影响效率的情况下通过简单的机制来进行一定程度的优化。</p>
+<ol>
+<li>对于model zoo可以自己训练一个轻量级模型来预测每个模型的准确率，从而实现变化场景model的实时切换</li>
+<li>感觉调度器的算法有点拉</li>
+<li>参数的迭代微调可以使用AIMD或者类似的算法</li>
+<li>跳帧控制器其实就是普遍的时间冗余过滤器</li>
+<li>运行时系统的资源配置优化 可以参考文章中fork and join的策略对资源进行重分配，但是文中调度算法较为简单，因此基于其的fork and join也较为简单地可以理解</li>
+</ol></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
