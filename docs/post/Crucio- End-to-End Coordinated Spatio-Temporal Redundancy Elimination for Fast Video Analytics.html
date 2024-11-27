@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="# Crucio: End-to-End Coordinated Spatio-Temporal Redundancy Elimination for Fast Video Analytics
+
+第一作者和通讯作者：AnDong Zhu（PhD）Sheng Zhang（Associate Professor）
+
+学校：全部来自南京大学
+
+## 摘要
+
+作者提出了CRUCIO，一个通过压缩和解压缩视频帧来过滤冗余数据、降低延迟的工具。">
+<meta property="og:title" content="Crucio: End-to-End Coordinated Spatio-Temporal Redundancy Elimination for Fast Video Analytics">
+<meta property="og:description" content="# Crucio: End-to-End Coordinated Spatio-Temporal Redundancy Elimination for Fast Video Analytics
+
+第一作者和通讯作者：AnDong Zhu（PhD）Sheng Zhang（Associate Professor）
+
+学校：全部来自南京大学
+
+## 摘要
+
+作者提出了CRUCIO，一个通过压缩和解压缩视频帧来过滤冗余数据、降低延迟的工具。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://nexor-source.github.io/post/Crucio-%20End-to-End%20Coordinated%20Spatio-Temporal%20Redundancy%20Elimination%20for%20Fast%20Video%20Analytics.html">
+<meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
+<title>Crucio: End-to-End Coordinated Spatio-Temporal Redundancy Elimination for Fast Video Analytics</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">Crucio: End-to-End Coordinated Spatio-Temporal Redundancy Elimination for Fast Video Analytics</h1>
+<div class="title-right">
+    <a href="https://nexor-source.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/nexor-source/nexor-source.github.io/issues/3" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h1>Crucio: End-to-End Coordinated Spatio-Temporal Redundancy Elimination for Fast Video Analytics</h1>
+<p>第一作者和通讯作者：AnDong Zhu（PhD）Sheng Zhang（Associate Professor）</p>
+<p>学校：全部来自南京大学</p>
+<h2>摘要</h2>
+<p>作者提出了CRUCIO，一个通过压缩和解压缩视频帧来过滤冗余数据、降低延迟的工具。</p>
+<h4>主要特点</h4>
+<h2>背景介绍</h2>
+<p>VAP（Video Analytics Pipeline）视频分析流水线概念经常出现于目标分析等视频分析任务中，包含：</p>
+<ol>
+<li><strong>视频采集</strong>：摄像头在客户端捕捉视频帧</li>
+<li><strong>视频压缩和传输</strong>：捕获的视频帧被压缩成视频块，通过无线网络传输到服务器</li>
+<li><strong>分析/推理</strong>：服务器运行DNN等算法来对视频数据进行处理</li>
+</ol>
+<p>在第2步中，基于传统编码器会导致许多对分析任务<strong>无用的帧也被进行压缩保留，导致更高的传输延迟，解码延迟和推理延迟</strong>。冗余可以大致分为<strong>空间冗余</strong>（指一大片像素中的有效信息很少，比如平滑像素）和<strong>时间冗余</strong>（指前后视频帧变化不大，比如静止区域）。针对这些冗余已经有很多处理方法：</p>
+<ul>
+<li>
+<p>[空间冗余] 根据分析任务定制ROI（Region of Interest)编码，<strong>对感兴趣的区域进行高编码，其他地方低编码</strong></p>
+<p>缺点：没法彻底消除平滑区域的冗余（比如ROI里面有很多<strong>平滑像素对象，单纯对ROI使用高质量编码还是会导致如下图所示的冗余</strong>，其实我们只拿到轮廓信息就足够了）</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/b2abeea0-9558-4243-8f5c-699ad6ee2df6"><img src="https://github.com/user-attachments/assets/b2abeea0-9558-4243-8f5c-699ad6ee2df6" alt="image-20241125213458895" style="max-width: 100%;"></a></p>
+</li>
+<li>
+<p>[时间冗余] 训练二元分类器，输入帧输出<strong>是否包含特定事件来进行过滤</strong></p>
+<p>缺点：难以训练，训练不好的话会大大降低准确性</p>
+</li>
+<li>
+<p>[时间冗余/空间冗余] 自适应的CBF（Comparison-Based Filtering）比较帧间相似性并且<strong>抛弃过于相似的帧</strong></p>
+<p>缺点：可能会<strong>破坏关键帧</strong>，导致所有基于关键帧记录差异值的差分帧解码失败。（实际上，所有的针对时间冗余进行优化的方法都有可能会遇到这种问题，包括上面提到的二元分类器。另一个问题是对于高帧率来说，由于帧数的增加CBF会丢弃更多的帧从而<strong>生成更多的SEGs</strong>，如下图所示，从而加大对SEGs压缩的困难）</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/82e79e06-b6b1-4588-869d-f07a0a28ecc9"><img src="https://github.com/user-attachments/assets/82e79e06-b6b1-4588-869d-f07a0a28ecc9" alt="image-20241125213521932" style="max-width: 100%;"></a></p>
+</li>
+<li>
+<p>[空间冗余] RESPIRE系统，专注于对多摄像头采集到的视频进行重复空间上的去冗余</p>
+<p>缺点：专注于多摄像头系统进行优化</p>
+</li>
+</ul>
+<p>总得来说，<strong>传统编码器理解任务的开销较大</strong>（每次检测都需要额外运行兴趣区域检测算法），并且帧间压缩容易受到ROI异质性编码（针对感兴趣区域采用较高质量编码，针对不感兴趣的区域则较低）影响。而神经网络（NN）解码器具有更高的性能，例如AdaFocus，MAR等方法（因为自动解码器经过训练后可以直接提取兴趣区域的特征）</p>
+<p>但这些NN解码器忽略了端到端的优化，导致分析精度低，客户端编码延迟高，pipeline的额外延迟（<em>难道他们的解码方法测试不是走完整个端到端的流程进行性能上的测试吗，这些因素应该都包含进去了才对</em>），因此作者提出了CRUCIO方法。</p>
+<h4>方法特点</h4>
+<ul>
+<li>
+<p>自动编码器</p>
+</li>
+<li>
+<p>端到端优化策略：</p>
+<p><strong>基于IR（中间语义特征）进行压缩</strong>而不是低层视觉特征（像素或纹理）进行压缩，并且<strong>基于任务acc进行优化</strong>而不是视觉压缩质量保证对整体任务的感知。<em>（也就是说这个Crucio需要在不同的任务上重新进行训练）</em></p>
+</li>
+<li>
+<p>时空协调优化（时空冗余处理）：</p>
+<p>使用GRU和3D-CNN自动编码器<strong>协同提取时空特征</strong>和3DCNN解码器</p>
+</li>
+<li>
+<p>自适应的批处理：</p>
+<p>根据网络带宽和动态帧率来<strong>自适应地调整批处理的大小</strong></p>
+<p>（动态帧率调整批处理大小是因为当FR高了以后正常的CBF会产生更多的SEGs，而作者的方法只需要拉大batch_size就足够提取特征了，也就是批量级过滤batch-level filtering）</p>
+</li>
+</ul>
+<h2>系统架构和工作流</h2>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/6d889379-5e7e-4a37-91be-dc9656651195"><img src="https://github.com/user-attachments/assets/6d889379-5e7e-4a37-91be-dc9656651195" alt="image-20241125213347239" style="max-width: 100%;"></a></p>
+<p>系统首先需要一个<strong>预设置的模型权重</strong>以及根据场景<strong>预定义的batch size</strong>。随后整体运行流程如下：</p>
+<ol>
+<li>
+<p>客户端的摄像头捕获到许多（FR相关）的视频帧</p>
+</li>
+<li>
+<p>一个batch的帧被输入到GRU-CNN编码器中，使<strong>重复IR的帧被去除</strong>，<strong>剩余的关键帧被3DCNN压缩为单独的视频块</strong></p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/ec5186cd-0e5b-4cc8-9069-dc05e99b646e"><img src="https://github.com/user-attachments/assets/ec5186cd-0e5b-4cc8-9069-dc05e99b646e" alt="image-20241126172231093" style="max-width: 100%;"></a></p>
+<p><strong>GRU部分</strong>：一个batch的帧先输入到GRU中，接下来被<em>并行</em>处理<strong>进行时间维度上的过滤得到许多关键帧</strong>。</p>
+<p>详细流程：视频先被输入到轻量级的SqueezeNet中并行处理，使得每帧视频$（3<em>H</em>W）$被表示为IR$（1<em>1000）$，随后这些IR被输入到双向GRU中，这个双向GRU是使用IR-aware loss进行训练的模型，因此GRU会比较当前帧的IR和前一帧的hidden state来在IR层面判断这帧是不是关键帧。最后因为是双向的，GRU每次会输出两个$256$长度的向量，因为一共有N帧，所以一共会得到$N</em>2<em>256$大小的输出向量，经过全连接层变为$N</em>1$的向量，使用sigmoid激活函数压缩到$（0，1）的范围后进行四舍五入得到用于mask输入帧的向量，从而筛选得到最后的关键帧。</p>
+<p>IR-aware loss分为两部分：</p>
+<ul>
+<li>Representativeness Loss：首先GRU输出得到N个IR向量（N为帧数），接着建立N*N大小的距离矩阵，并根据输出的Frame Vector过滤掉非关键帧的列。通过<em>某种度量距离的方法</em>来计算每行（输入帧）和每列（关键帧）之间的距离，最后通过exp运算后取平均得到loss，从而鼓励每个输入帧和其最接近的关键帧之间的差异尽量小</li>
+</ul>
+<p>$$<br>
+representativeness \  loss = \frac{1}{N}\sum_{i=1}^N{exp(M_{i,min})}<br>
+$$</p>
+<ul>
+<li>
+<p>Diversity Loss：如果只有第一部分的loss，模型只需要无脑输出全1向量即可，这样总能得到最小的representativeness loss。为了限制这一现象，作者加入了多样性损失。我们知道对于一组向量组成的行列式来说，行列式之间越线性相关，那么行列式的值就会越小，反之则会越大。因此我们将SqueezeNet中输出得到的N个特征向量通过高斯核函数来计算相似性<br>
+$$<br>
+K(x_i,x_j)=exp(-\frac{||x_i-x_j||^2}{2\sigma^2})<br>
+$$<br>
+构建得到$N*N$大小的相似性矩阵$L$，同样我们根据最终输出的Frame Vector过滤掉非关键帧，只使用关键帧来用同样的方法构成相似性矩阵$L_{key}$，然后计算DPP概率<br>
+$$<br>
+P_{DPP}=\frac{det(L_s)}{det(L+I)}<br>
+$$</p>
+<p>$$<br>
+L_{diversity}=-log(P_{DPP})<br>
+$$</p>
+<p>DPP概率的值越大，就代表$L_s$中的向量相对$L$越线性独立，差距越大，loss计算出来就越小，反之DPP越小，就意味着越相关，差距越小，冗余越大，loss计算出来就越大。</p>
+</li>
+</ul>
+<p><em>疑问：为什么Representativeness Loss要拿IR计算相似性来选择关键帧，而Diversity Loss要拿Squeeze Net的特征向量来计算相似矩阵使得关键帧的选择能去除冗余，为什么不使用相同的向量来计算？</em></p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/988bfe87-b811-4e18-b8e1-a2c2dbd02773"><img src="https://github.com/user-attachments/assets/988bfe87-b811-4e18-b8e1-a2c2dbd02773" alt="image-20241126180753808" style="max-width: 100%;"></a></p>
+<p><strong>3DCNN部分</strong>：筛选得到的关键帧在将RGB颜色空间转换为YUV空间，随后进入3DCNN网络<strong>在时空维度上进行压缩</strong>。3DCNN可以无缝衔接GRU，因为输出向量已经加载到了GPU显存中。</p>
+<p><em>（这里论文中说的是<strong>帧内卷积提取物体特征，然后帧间卷积实现时间维度上的压缩</strong>，但是3DCNN的卷积是针对长，宽，时间维度上的同时卷积，作者的说法更像是深度可分离卷积，也就是先按照通常的2D卷积对逐个时间维度进行处理，实现类ROI的空间冗余过滤，随后使用1*1*时间维度的卷积再在时间维度进行压缩，但论文中的网络结构图张贴的是3DCNN，这里不是很理解）</em></p>
+</li>
+<li>
+<p>压缩后的视频块基于UDP发送到Server的CNN解码器中</p>
+<p>发送之前压缩后的数据还会再使用LZMA算法进行无损熵编码二次压缩，并且在server会使用LZMA进行无损解压缩，之后才会送给CNN解码器中还原得到GRU筛选的关键帧。</p>
+</li>
+<li>
+<p>解码后的关键帧并行输入到分析网络中</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/34a57daf-d4fe-496c-9902-66d4b9fb2f69"><img src="https://github.com/user-attachments/assets/34a57daf-d4fe-496c-9902-66d4b9fb2f69" alt="image-20241127214458192" style="max-width: 100%;"></a></p>
+<p>注：这种端到端的编解码器架构在经过训练之后，运行所需要的开销远小于传统编解码的开销（比如每次运行都需要跑ROI划定算法的传统编解码方式）</p>
+</li>
+<li>
+<p>客户端的环境监控器收集FR和带宽信息发送给Server的Batch Scheduler中</p>
+<p>每个batch的大小越大，每帧在神经网络中处理的消耗就越小，但每个batch传输需要的时间就会越长</p>
+<p>因此FR越高或者带宽越高，batch size就越大</p>
+</li>
+<li>
+<p>Batch Scheduler计算得到批大小并且返回给客户端</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/759b5660-5da6-451e-a82e-f2a61d1f7c19"><img src="https://github.com/user-attachments/assets/759b5660-5da6-451e-a82e-f2a61d1f7c19" alt="image-20241127224910962" style="max-width: 100%;"></a></p>
+<p><strong>基准环境曲线的拟合</strong>：Batch Scheduler首先会定义一个基准网络带宽 $B_{bench}$，在这个基准网络带宽下，假设当前时间槽的帧率为 $F$，时间槽持续 $T$ 秒，那么系统多次调整参数后就可以获得当前环境的最优带宽大小 $b_{opt}(F)$，经过这样多次采集数据我们就可以拟合一条线性曲线 $b_{opt}(F)=mF+n$</p>
+<p><strong>上下界公式中参数的计算</strong>：获得了$m$,$n$参数的大小后，由于带宽会波动，因此我们还需要一个动态的batch size范围，作者定义了batch size在不同带宽环境下的上下界 $b_{small}$ 和 $b_{large}$ ，下界仍然为最优曲线的线性公式，上界为时间槽传输的所有帧 * 系数$\gamma$，并且上下界满足相加取平均为最优曲线 $b_{opt}$ ，联立所有方程并且最大化 $b_{large}(F) - b_{small}(F)$ 就可以求出上下界中的参数 $\alpha, \beta, \gamma$。</p>
+<p><strong>疑问</strong>：</p>
+<p>这里$T$也就是时间槽持续的时间应该是系统最开始就给定的，作为一个已知的参数，我们将$b_{small}$ , $b_{large}$ , $b_{opt}$带入到公式中得到<br>
+$$<br>
+(\alpha +\gamma T )F + \beta b_0 = 2mF + 2n<br>
+$$<br>
+由于$m,n$已经在之前就求出，所以我们有<br>
+$$<br>
+\alpha + \gamma T = 2m\<br>
+\beta b_0 = 2n<br>
+$$<br>
+这里 $b_0$ 代表最小batch size，也是作者提前给出的值，因此我们可以直接得到 $ \beta$ 的值就是 $\frac{2n}{b_0}$ ，又因为我们需要最大化 $b_{large}(F) - b_{small}(F)$，也就是最大化 $( \gamma T - \alpha)F - \beta b_0$，那我们肯定直接最大化 $(\gamma T - \alpha)$，也就是 $2\gamma T - 2m$，所以求得<br>
+$$<br>
+\gamma = min(\frac{2m}{T},1)  \<br>
+\alpha = max(0,2m - \gamma T)  \<br>
+\beta = \frac{2n}{b_0}<br>
+$$<br>
+由于几个参数的取值范围都是开区间，所以作者是假定 $\frac{2m}{T}$ 一定小于1了是吗，否则就说不通了</p>
+<p><strong>更新策略</strong>：</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/efddec39-efdf-4735-8982-7c24f2712b75"><img src="https://github.com/user-attachments/assets/efddec39-efdf-4735-8982-7c24f2712b75" alt="image-20241128042244100" style="max-width: 100%;"></a></p>
+<p>作者提出了DLABSA算法，流程如上图，通过迭代的方式，根据当前带宽和基准网络带宽的大小比较来以1为步长迭代调整最适合的batch size（以1为步长并不会带来过大的计算延迟）</p>
+<p>在带宽低于基准网络带宽时，对batch size的调整使用到了<br>
+$$<br>
+d(b) = \delta_1In(\delta_2b)+\delta_3<br>
+$$<br>
+式中的$\delta_1, \delta_2, \delta_3$更新是每个时隙在线更新（<em>具体更新策略是怎么样的？</em>）式中定义的函数是凹函数(concave function)，也就是在batch size较低时斜率变化大，batch size较大时斜率变化小。低带宽情况下网络传输占延迟的部分很大，相比之下编码占比的部分会较小，而凹函数斜率因自变量的减少逐渐加大。因此1的步长对于延迟的调整就较为合适，逐步减少batch size来让编码开销赶上带宽传输变化。</p>
+</li>
+</ol>
+<h2>评估</h2>
+<h4>训练设置</h4>
+<p>server上的分析任务网络为 Faster R-CNN，通过将未压缩的帧的IR（SqueezeNet</p>
+<h4>数据集和网络状况</h4>
+<p>视频来自YoutubeObjects数据集中的视频，包含10中类别的对象，视频帧大小640*480，每个视频只有0.5-2秒，平均带宽1.5Mbps（也就是提到的基准带宽），分布区间为 [0.4, 2.6] Mbps。</p>
+<h4>Baseline</h4>
+<ul>
+<li>DDS：定制的ROI编码来去除帧内背景，但是<strong>没有对时间冗余的处理</strong></li>
+<li>Reducto：自适应帧过滤算法来消除时间冗余，并且仅对过滤后的关键帧进行压缩，但是Reducto对于空间冗余的<strong>过滤不完全（传统编码器）</strong>，留下了对分析任务无关的信息。并且<strong>频繁的过滤会导致碎片化的传输使得延迟增加</strong></li>
+<li>STAC：DNN驱动的图像编解码器，可以进行帧空间压缩和帧过滤，但是每个帧<strong>单独上传压缩</strong>，所以消耗了大量带宽，并且很难同时到达服务器，使得server并行解码较为困难。</li>
+<li>Combi：尝试结合DDS和Reducto，但是<strong>ROI编码和CBF互斥</strong>导致结合效果一般。</li>
+</ul>
+<h4>结果</h4>
+<p>CRUCIO不仅在编解码的延迟，端到端延迟，冗余的去除等方面更为优越。</p>
+<h2>总结</h2>
+<p>作者提出了CRUCIO，一种针对视频分析系统使用的延迟优化算法，使用端到端的GRU-CNN编解码器来消除时空冗余。</p>
+<p>GRU：实现基于IR的批量过滤（空间冗余过滤）</p>
+<p>CNN：面向精度的视频时空压缩（时空压缩）</p>
+<p>环境监视器和批量调度程序：动态感知FR和带宽来自适应调整批处理大小改善延迟</p>
+<h2>感想</h2>
+<ol>
+<li>GRU可以针对每帧/片进行过滤，实现空间冗余的去除</li>
+<li>计算相似性也可以使用高斯核函数</li>
+<li>同样的方向考虑在时空冗余AI压缩算法来创新，同时还需要加入根据网络环境参数自适应调整的算法。</li>
+</ol></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://nexor-source.github.io">马越's Blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","nexor-source/nexor-source.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+
+
+</script>
+<script>MathJax = {tex: {inlineMath: [["$", "$"]]}};</script><script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</html>
