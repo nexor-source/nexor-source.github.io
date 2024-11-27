@@ -171,7 +171,7 @@ VAP（Video Analytics Pipeline）视频分析流水线概念经常出现于目�
 
 #### 训练设置
 
-server上的分析任务网络为 Faster R-CNN，通过将未压缩的帧的IR（SqueezeNet
+server上的分析任务网络为 Faster R-CNN，通过将未压缩的帧的IR作为GT，和在线IR对比计算F1分数（也就是将GRU输出的关键帧和经过CNN编解码压缩后的关键帧进分别输入到Faster R-CNN中进行对比），给定0.9的F1 score目标来进行训练。
 
 #### 数据集和网络状况
 

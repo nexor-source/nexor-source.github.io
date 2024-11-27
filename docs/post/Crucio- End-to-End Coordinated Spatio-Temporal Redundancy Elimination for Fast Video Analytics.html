@@ -233,7 +233,7 @@ $$<br>
 </ol>
 <h2>评估</h2>
 <h4>训练设置</h4>
-<p>server上的分析任务网络为 Faster R-CNN，通过将未压缩的帧的IR（SqueezeNet</p>
+<p>server上的分析任务网络为 Faster R-CNN，通过将未压缩的帧的IR作为GT，和在线IR对比计算F1分数（也就是将GRU输出的关键帧和经过CNN编解码压缩后的关键帧进分别输入到Faster R-CNN中进行对比），给定0.9的F1 score目标来进行训练。</p>
 <h4>数据集和网络状况</h4>
 <p>视频来自YoutubeObjects数据集中的视频，包含10中类别的对象，视频帧大小640*480，每个视频只有0.5-2秒，平均带宽1.5Mbps（也就是提到的基准带宽），分布区间为 [0.4, 2.6] Mbps。</p>
 <h4>Baseline</h4>
