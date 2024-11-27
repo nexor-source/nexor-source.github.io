@@ -155,7 +155,8 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p>一个batch的帧被输入到GRU-CNN编码器中，使<strong>重复IR的帧被去除</strong>，<strong>剩余的关键帧被3DCNN压缩为单独的视频块</strong></p>
 <p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/ec5186cd-0e5b-4cc8-9069-dc05e99b646e"><img src="https://github.com/user-attachments/assets/ec5186cd-0e5b-4cc8-9069-dc05e99b646e" alt="image-20241126172231093" style="max-width: 100%;"></a></p>
 <p><strong>GRU部分</strong>：一个batch的帧先输入到GRU中，接下来被<em>并行</em>处理<strong>进行时间维度上的过滤得到许多关键帧</strong>。</p>
-<p>详细流程：视频先被输入到轻量级的SqueezeNet中并行处理，使得每帧视频$（3<em>H</em>W）$被表示为IR$（1<em>1000）$，随后这些IR被输入到双向GRU中，这个双向GRU是使用IR-aware loss进行训练的模型，因此GRU会比较当前帧的IR和前一帧的hidden state来在IR层面判断这帧是不是关键帧。最后因为是双向的，GRU每次会输出两个$256$长度的向量，因为一共有N帧，所以一共会得到$N</em>2<em>256$大小的输出向量，经过全连接层变为$N</em>1$的向量，使用sigmoid激活函数压缩到$（0，1）的范围后进行四舍五入得到用于mask输入帧的向量，从而筛选得到最后的关键帧。</p>
+<p>详细流程：视频先被输入到轻量级的SqueezeNet中并行处理，使得每帧视频$（3 \times H \times W）$被表示为IR$（1<br>
+\times 1000）$，随后这些IR被输入到双向GRU中，这个双向GRU是使用IR-aware loss进行训练的模型，因此GRU会比较当前帧的IR和前一帧的hidden state来在IR层面判断这帧是不是关键帧。最后因为是双向的，GRU每次会输出两个$256$长度的向量，因为一共有N帧，所以一共会得到$N \times 2 \times 256$大小的输出向量，经过全连接层变为$N \times 1$的向量，使用sigmoid激活函数压缩到$（0，1）的范围后进行四舍五入得到用于mask输入帧的向量，从而筛选得到最后的关键帧。</p>
 <p>IR-aware loss分为两部分：</p>
 <ul>
 <li>Representativeness Loss：首先GRU输出得到N个IR向量（N为帧数），接着建立N*N大小的距离矩阵，并根据输出的Frame Vector过滤掉非关键帧的列。通过<em>某种度量距离的方法</em>来计算每行（输入帧）和每列（关键帧）之间的距离，最后通过exp运算后取平均得到loss，从而鼓励每个输入帧和其最接近的关键帧之间的差异尽量小</li>
