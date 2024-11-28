@@ -1,5 +1,3 @@
-# Gecko: Resource-Efficient and Accurate Queries in Real-Time Video Streams at the Edge
-
 第一作者：Liang Wang（华中科技大学）
 
 通讯作者：Jianzong Wang（深圳平安科技）Guokuan Li（华中科技大学）
