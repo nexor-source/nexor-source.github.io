@@ -1,5 +1,17 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>马越's Blog</title><link>https://nexor-source.github.io</link><description>记录学习生活</description><copyright>马越's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://nexor-source.github.io</link></image><lastBuildDate>Thu, 28 Nov 2024 16:20:29 +0000</lastBuildDate><managingEditor>马越's Blog</managingEditor><ttl>60</ttl><webMaster>马越's Blog</webMaster><item><title>Crucio: End-to-End Coordinated Spatio-Temporal Redundancy Elimination for Fast Video Analytics</title><link>https://nexor-source.github.io/post/Crucio-%20End-to-End%20Coordinated%20Spatio-Temporal%20Redundancy%20Elimination%20for%20Fast%20Video%20Analytics.html</link><description>&#13;
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>马越's Blog</title><link>https://nexor-source.github.io</link><description>记录学习生活</description><copyright>马越's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://nexor-source.github.io</link></image><lastBuildDate>Mon, 09 Dec 2024 03:08:12 +0000</lastBuildDate><managingEditor>马越's Blog</managingEditor><ttl>60</ttl><webMaster>马越's Blog</webMaster><item><title>Reducto: On-Camera Filtering for Resource-Efficient Real-Time Video Analytics</title><link>https://nexor-source.github.io/post/Reducto-%20On-Camera%20Filtering%20for%20Resource-Efficient%20Real-Time%20Video%20Analytics.html</link><description>第一作者（共一）：Yuanqi Li,   Arthi Padmanabhan&#13;
+&#13;
+学校：加利福尼亚大学洛杉矶分校（University of California, Los Angeles）&#13;
+&#13;
+## 摘要&#13;
+&#13;
+提出了Reducto，一个在摄像头端进行数据过滤并且可以根据各种特征进行动态自适应调整的决策系统（任务仅限识别，计数，检测）&#13;
+&#13;
+## 背景介绍&#13;
+&#13;
+#### 简单概括&#13;
+&#13;
+由于相机性能抛弃压缩检测模型方法，由于速度和过滤方式抛弃二元分类模型并旨在帧差分方法上特征间的关系寻找动态阈值来实现更好的效果。</description><guid isPermaLink="true">https://nexor-source.github.io/post/Reducto-%20On-Camera%20Filtering%20for%20Resource-Efficient%20Real-Time%20Video%20Analytics.html</guid><pubDate>Mon, 09 Dec 2024 03:06:57 +0000</pubDate></item><item><title>Crucio: End-to-End Coordinated Spatio-Temporal Redundancy Elimination for Fast Video Analytics</title><link>https://nexor-source.github.io/post/Crucio-%20End-to-End%20Coordinated%20Spatio-Temporal%20Redundancy%20Elimination%20for%20Fast%20Video%20Analytics.html</link><description>&#13;
 第一作者和通讯作者：AnDong Zhu（PhD）Sheng Zhang（Associate Professor）&#13;
 &#13;
 学校：全部来自南京大学&#13;
