@@ -1,5 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>马越's Blog</title><link>https://nexor-source.github.io</link><description>记录学习生活</description><copyright>马越's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://nexor-source.github.io</link></image><lastBuildDate>Mon, 09 Dec 2024 03:08:12 +0000</lastBuildDate><managingEditor>马越's Blog</managingEditor><ttl>60</ttl><webMaster>马越's Blog</webMaster><item><title>Reducto: On-Camera Filtering for Resource-Efficient Real-Time Video Analytics</title><link>https://nexor-source.github.io/post/Reducto-%20On-Camera%20Filtering%20for%20Resource-Efficient%20Real-Time%20Video%20Analytics.html</link><description>第一作者（共一）：Yuanqi Li,   Arthi Padmanabhan&#13;
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>马越's Blog</title><link>https://nexor-source.github.io</link><description>记录学习生活</description><copyright>马越's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://nexor-source.github.io</link></image><lastBuildDate>Wed, 01 Jan 2025 18:38:32 +0000</lastBuildDate><managingEditor>马越's Blog</managingEditor><ttl>60</ttl><webMaster>马越's Blog</webMaster><item><title>Learning for Crowdsourcing: Online Dispatch for Video Analytics with Guarantee</title><link>https://nexor-source.github.io/post/Learning%20for%20Crowdsourcing-%20Online%20Dispatch%20for%20Video%20Analytics%20with%20Guarantee.html</link><description>第一作者：Chen Yu（南京大学计算机软件新技术国家重点实验室）&#13;
+&#13;
+通信作者：Zhang Sheng（南京大学计算机软件新技术国家重点实验室），Jin Yibo（南京大学计算机软件新技术国家重点实验室）&#13;
+&#13;
+## 摘要：&#13;
+&#13;
+基于众包的动态调度算法，用于优化视频分析任务中工作人员和资源配置的选择，从而提升平台的整体利润&#13;
+&#13;
+#### 众包平台的核心balance&#13;
+&#13;
+- **需要提升任务完成的质量**（比如视频分析，输入更高分辨率或者更高帧率）&#13;
+- **降低worker上的支出成本**（更高质量的任务配置需要worker花费更高的能源在计算上，消耗更多的资源会导致worker得到更多的报酬）&#13;
+- **动态调整任务分配**（由于worker的动态可用性，因此平台需要考虑合适的算法思考worker离开后应该如何分配任务，分配给谁）&#13;
+&#13;
+#### 众包平台面临的挑战&#13;
+&#13;
+众包将手动注释，图像标记等任务分发给各种移动用户（worker）来执行，并且给worker发放奖励，奖励取决于worker执行结果的质量。</description><guid isPermaLink="true">https://nexor-source.github.io/post/Learning%20for%20Crowdsourcing-%20Online%20Dispatch%20for%20Video%20Analytics%20with%20Guarantee.html</guid><pubDate>Wed, 01 Jan 2025 18:38:08 +0000</pubDate></item><item><title>Reducto: On-Camera Filtering for Resource-Efficient Real-Time Video Analytics</title><link>https://nexor-source.github.io/post/Reducto-%20On-Camera%20Filtering%20for%20Resource-Efficient%20Real-Time%20Video%20Analytics.html</link><description>第一作者（共一）：Yuanqi Li,   Arthi Padmanabhan&#13;
 &#13;
 学校：加利福尼亚大学洛杉矶分校（University of California, Los Angeles）&#13;
 &#13;

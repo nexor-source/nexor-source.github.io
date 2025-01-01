@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="第一作者：Chen Yu（南京大学计算机软件新技术国家重点实验室）
+
+通信作者：Zhang Sheng（南京大学计算机软件新技术国家重点实验室），Jin Yibo（南京大学计算机软件新技术国家重点实验室）
+
+## 摘要：
+
+基于众包的动态调度算法，用于优化视频分析任务中工作人员和资源配置的选择，从而提升平台的整体利润
+
+#### 众包平台的核心balance
+
+- **需要提升任务完成的质量**（比如视频分析，输入更高分辨率或者更高帧率）
+- **降低worker上的支出成本**（更高质量的任务配置需要worker花费更高的能源在计算上，消耗更多的资源会导致worker得到更多的报酬）
+- **动态调整任务分配**（由于worker的动态可用性，因此平台需要考虑合适的算法思考worker离开后应该如何分配任务，分配给谁）
+
+#### 众包平台面临的挑战
+
+众包将手动注释，图像标记等任务分发给各种移动用户（worker）来执行，并且给worker发放奖励，奖励取决于worker执行结果的质量。">
+<meta property="og:title" content="Learning for Crowdsourcing: Online Dispatch for Video Analytics with Guarantee">
+<meta property="og:description" content="第一作者：Chen Yu（南京大学计算机软件新技术国家重点实验室）
+
+通信作者：Zhang Sheng（南京大学计算机软件新技术国家重点实验室），Jin Yibo（南京大学计算机软件新技术国家重点实验室）
+
+## 摘要：
+
+基于众包的动态调度算法，用于优化视频分析任务中工作人员和资源配置的选择，从而提升平台的整体利润
+
+#### 众包平台的核心balance
+
+- **需要提升任务完成的质量**（比如视频分析，输入更高分辨率或者更高帧率）
+- **降低worker上的支出成本**（更高质量的任务配置需要worker花费更高的能源在计算上，消耗更多的资源会导致worker得到更多的报酬）
+- **动态调整任务分配**（由于worker的动态可用性，因此平台需要考虑合适的算法思考worker离开后应该如何分配任务，分配给谁）
+
+#### 众包平台面临的挑战
+
+众包将手动注释，图像标记等任务分发给各种移动用户（worker）来执行，并且给worker发放奖励，奖励取决于worker执行结果的质量。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://nexor-source.github.io/post/Learning%20for%20Crowdsourcing-%20Online%20Dispatch%20for%20Video%20Analytics%20with%20Guarantee.html">
+<meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
+<title>Learning for Crowdsourcing: Online Dispatch for Video Analytics with Guarantee</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">Learning for Crowdsourcing: Online Dispatch for Video Analytics with Guarantee</h1>
+<div class="title-right">
+    <a href="https://nexor-source.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/nexor-source/nexor-source.github.io/issues/5" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><p>第一作者：Chen Yu（南京大学计算机软件新技术国家重点实验室）</p>
+<p>通信作者：Zhang Sheng（南京大学计算机软件新技术国家重点实验室），Jin Yibo（南京大学计算机软件新技术国家重点实验室）</p>
+<h2>摘要：</h2>
+<p>基于众包的动态调度算法，用于优化视频分析任务中工作人员和资源配置的选择，从而提升平台的整体利润</p>
+<h4>众包平台的核心balance</h4>
+<ul>
+<li><strong>需要提升任务完成的质量</strong>（比如视频分析，输入更高分辨率或者更高帧率）</li>
+<li><strong>降低worker上的支出成本</strong>（更高质量的任务配置需要worker花费更高的能源在计算上，消耗更多的资源会导致worker得到更多的报酬）</li>
+<li><strong>动态调整任务分配</strong>（由于worker的动态可用性，因此平台需要考虑合适的算法思考worker离开后应该如何分配任务，分配给谁）</li>
+</ul>
+<h4>众包平台面临的挑战</h4>
+<p>众包将手动注释，图像标记等任务分发给各种移动用户（worker）来执行，并且给worker发放奖励，奖励取决于worker执行结果的质量。但这种规划常常面临以下这些挑战：</p>
+<ul>
+<li>
+<p>不同worker的<strong>异构配置</strong>，有的worker没法配置大量任务以及计算资源。有的任务可能对输入有要求，而某些worker没法满足输入的要求</p>
+<blockquote>
+<p>既然考虑到了异构的配置，那么这里就顺便提一下众包任务分发策略的两种，一种是<strong>用户选择任务模式</strong>，这种情况下平台不需要制定任务分发策略，用户自由度很高，但可能会出现任务滞留的情况，另一种则是<strong>平台分发任务模式</strong>，平台需要定制任务分发策略来自动发送给用户，这种情况下用户和任务的匹配更加精准，但自由度较低，运营成本稍高。</p>
+</blockquote>
+</li>
+<li>
+<p>worker的<strong>动态可用性</strong>实时发生变化，需要对应的<strong>动态调整分配策略</strong>，分配策略需要考虑worker不确定消耗的资源，并且由于worker动态的可用性，使用历史数据来进行预测可能会降低准确度。</p>
+</li>
+<li>
+<p><strong>激励策略的制定</strong>，出于公平性，实时性和效率的原因，激励策略需要在平台上线前确立并且确保适当的合理性，但动态的网络环境和不同的设备运行状态与环境都会导致worker消耗资源难以估计，进而使得平台难以根据worker的成本来合理设置报酬。</p>
+</li>
+</ul>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/a0d36f6e-489f-4f4c-9854-dd9c149ca9a7"><img src="https://github.com/user-attachments/assets/a0d36f6e-489f-4f4c-9854-dd9c149ca9a7" alt="image-20241212155508794" style="max-width: 100%;"></a></p>
+<p>图为计算传输的能耗波动图，<em>但我认为用户计算任务的时间会比较长（可能至少1min？）总之应该不是按几秒来算的，图中尤其是传输产生的能耗可以发现其均值较为稳定，所以worker执行任务的时间都是几秒几秒的吗，如果不是那有必要考虑这些吗</em></p>
+<p>现有的方法要么没有考虑动态可用性，要么缺少任务配置与利润的联合优化，要么缺少配置和worker的联合优化</p>
+<h2>问题设置</h2>
+<h4>时间</h4>
+<p>将众包系统按时槽（Time Slot）进行划分并记为$\mathcal{T}={1,...,T}$，并且每个Slot划分为多个阶段（Epoch）$\mathcal{J}^t$ 在每个时槽$t$的阶段$j$中可用的worker被记为 $\mathcal{N}_j^t$</p>
+<h4>任务划分</h4>
+<p>在每个时槽都有需要完成的任务集合，记为$\mathcal{M}^t={s_1^t,s_2^t,...,s^t_{M_t}}$，共$M_t$</p>
+<p>由于视频分析的任务通常比较大，因此作者将任务分为多个子任务以匹配移动设备的运行环境。每个任务$s^t_m$划分的子任务集合记为 $\mathcal{K_m^t={s_{m,k}^t|k=1,2,...,K_m^t}}$，共$K_m^t$<em>（子任务是平台划分的吗？）</em></p>
+<h4>worker任务分配</h4>
+<p>每个worker假定只配一个CNN model，在worker被选定的时候会同时确定该worker上（所有）CNN的输入分辨率 $r_i$，假设所有待分析视频的原本分辨率都很大，则$r_i$是经过下采样以适配worker运行环境后的分辨率。子任务$x^t_{m,k}$是否分配给worker $n$记为$x^t_{m,k,n}$，并且子任务选择的帧率为 $f_{m,k}^t$。</p>
+<h4>任务完成精度</h4>
+<p>针对任务的完成精度，作者通过先前的研究和自己的实验发现，精度与分辨率和帧率的关系可以被建模为凹函数（Concave Function），并且分辨率和帧率对于精度的影响是独立的，因此<strong>针对$t$ slot $j$ epoch 的子任务$s_{m,k}^t$</strong>，其任务完成得精度可以按照如下公式计算<br>
+$$<br>
+a_{m,k}^t=\epsilon_m^t(\sum_{n=1}^{|\mathcal{N_j^t}|}x_{m,k,n}^tr_n)\phi_m^t(f_{m,k}^t)<br>
+$$<br>
+这里$\epsilon_m^t(resolution)$和$\phi_m^t(frame\ rate)$就分别是分辨率和帧率对应的凹函数，将worker的分辨率求和并应用$\epsilon_m^t$凹函数，后由于帧率和分辨率是单独影响，所以这里直接让帧率应用$\phi_m^t$凹函数后相乘*（这里有一个疑问就是，给某个子任务分配的worker越多，带入到凹函数$\epsilon_m^t$中的数值就会越大，是不是应该先将分配的worker的分辨率先求和呢）*</p>
+<p>因此可以简单求和取平均计算得到所有任务的整体平均准确率<br>
+$$<br>
+a^t=\frac{\sum_{m=1}^{M^t}\sum_{k=1}^{K_m^t}a^t_{m,k}}{|M^t||K_m^t|}<br>
+$$</p>
+<h4>worker能量消耗</h4>
+<p>worker消耗的能耗前文主要讲了有传输能耗和计算能耗</p>
+<ul>
+<li>
+<p><strong>传输能耗</strong>是worker从众包平台下载视频所消耗的能量，这部分的大小和视频大小成正比，对于分辨率为$r$的视频的每一帧的大小可以定义为$\alpha r^2$，$\alpha$是常量，因此定义$t$时槽下载视频消耗的能耗为<br>
+$$<br>
+e_n^{d,t}=\sum_{m=1}^{M^t}\sum_{k=1}^{K_m^t}\gamma_{m,n}^t\alpha(x_{m,k,n}^tr_n)^2f^t_{m,k}<br>
+$$<br>
+公式中对于某个worker的所有子任务上的消耗计算公式中，每个子任务每帧的大小都是相同的，即$\alpha (x_{m,k,n}^tr_n)^2$，再乘子任务对应的帧率$f_{m,k}^t$得到每秒的数据量，*这里是假设每个slot都是对应的1s长度是吗？*最后再乘用于对某视频的传输消耗系数$\gamma_{m,n}^t$计算得到<strong>每时槽$t$某用户$n$对于所有分配到其的子任务所产生的传输消耗和</strong>。也就是说worker可以在某个时槽接收多个子任务，每个子任务对应一个CNN，一共执行多个CNN</p>
+</li>
+<li>
+<p><strong>计算能耗</strong>是worker本地处理视频帧消耗的能量，将worker $n$在slot $t$时槽处理视频任务$m$的一帧所消耗的能量记为$\mu_{m,n}^t$，则可以定义worker $n$在slot $t$时计算产生的总能耗为<br>
+$$<br>
+e_n^{c,t}=\sum_{m=1}^{M^t}\sum_{k=1}^{K^t_m}\mu_{m,n}^tx_{m,k,n}^tf_{m,k}^t<br>
+$$<br>
+也就是对所有分配到worker的子任务的帧率$f_{m,k}^t$和消耗能量$\mu _{m,n}^t$的求和</p>
+</li>
+</ul>
+<p>所以总能耗$e_n^t$就是计算能耗$e_n^{c,t}$和传输能耗$e_n^{d,t}$之和，且公式里的bit传输消耗系数$\gamma_{m,n}^t$和每帧计算消耗系数$\mu_{m,n}^t$是随机的*（随机的？）*</p>
+<h4>众包利润</h4>
+<p>用凹函数（Concave Function）$G_m^t(a)$来建模收入函数*（为什么是凹函数）*，这里$a$就是任务$s_m^t$的完成精度。所以在时槽t内获取的来自任务发布者的奖励公式为：<br>
+$$<br>
+I^t=\sum_{m=1}^{M^t}\sum_{k=1}^{K_m^t}G_m^t(a_{m,k}^t).<br>
+$$<br>
+也就是所有子任务精度带入凹函数中求和的结果</p>
+<p>在移动众包中，worker获得的酬劳主要取决于其能源消耗，设$\omega_n$是worker n定价的单位能量消耗的费用，则时槽$t$内众包平台支出的总费用为：<br>
+$$<br>
+O^t=\sum_{j=1}^{|\mathcal{J^t}|}\sum_{n=1}^{|\mathcal{N_j^t}|}\omega_ne_n^t<br>
+$$<br>
+也就是worker $n$ 在时槽$t$上的总能耗，然后对worker $n$和时槽t的所有epoch求和*（这里需要注意epoch在之前计算中都是怎么被考虑的）*。最后，平台的利润就是简单的：<br>
+$$<br>
+U^t = I^t - O^t<br>
+$$</p>
+<h2>问题建模</h2>
+<p>$$<br>
+\mathbb{P}<em>1\ \ :\underset{x,f}{max}\ \underset{T\to+\infin}{lim}\ \frac{1}{T}\sum</em>{t=0}^TU^t \<br>
+\texttt{最大化无限时间长度上的平均利润，可控变量为分配变量x和选择给每个子任务的帧率}\<br>
+s.t.\ \ x_{m,k,n}^t={0,1},\ \forall t,m,k,n \<br>
+\texttt{分配变量x是bool变量} \<br>
+\sum_{j=1}^{|\mathcal{J}^t|}\sum_{n=1}^{|\mathcal{N}<em>j^t|}x</em>{m,k,n}^t=1,\ \forall t,m,k \<br>
+\texttt{时槽t epoch j的每个子任务只分配给一个worker} \<br>
+1\le f_{m,k}^t \le F_m^t, \forall t,m,k \<br>
+\texttt{众包平台选择的帧率必须小于视频的原始帧率} \<br>
+\underset{T\to +\infin}{lim}\ \frac{1}{T}\sum_{t=0}^T a^t \ge A^{min}. \<br>
+\texttt{所有任务整体平均准确率长期来看需要稳定在某阈值之上} \<br>
+$$</p>
+<p>由于需要保证长期准确率高于阈值，则需要分析不同时槽$t$的worker选择$x$和帧率选择$f$（也很难根据经验预测），因此：</p>
+<ul>
+<li>使用李雅普诺夫优化将时间平均问题转化为了一系列每个时槽的子问题</li>
+<li>采用多臂赌博机来解子问题时仍然保持李雅普诺夫对于子问题的约束</li>
+</ul>
+<h3>李雅普诺夫优化</h3>
+<h4>为什么采用</h4>
+<p>李亚普诺夫优化的关键优势之一是能够在每个时间周期做出决策，而<strong>不需要全局信息或对整个问题进行精确求解</strong>。这对于解决具有复杂约束的动态优化问题非常有用。通过这种方法，系统能够在不需要大量计算和全局信息的情况下，基于当前状态做出实时的近似最优决策。</p>
+<h4>队列积压函数</h4>
+<p>定义虚拟精度亏损队列，队列初始积压$q(0) = 0$，$q(t)$代表在时槽$t$偏离目标精度的程度，积压函数变化公式：<br>
+$$<br>
+q(t+1)=[q(t)+A^{min}-a^t]^+ \<br>
+[·]^+代表max(·,0),因此还可以得到 \<br>
+q(t+1) \le q(t) + A^{min} - a^t \<br>
+A^{min}是设定需要长期保证的准确率，a^t是当前时槽达到的平均准确率 \<br>
+$$<br>
+，如果为了追求利润，平台大大降低worker的消耗，就会导致任务完成精度很低，精度损失很大，导致队列积压$q(t)$增大。为了约束长期不偏离目标精度，定义二次李亚普诺夫函数<br>
+$$<br>
+L(q(t))=\frac{1}{2}(q(t))^2<br>
+$$<br>
+，代表队列积压程度。为了保持队列的稳定性，需要不断将$L(q(t))$的值压低。</p>
+<h4>李亚普诺夫漂移</h4>
+<p>定义单时槽$t$的李雅普诺夫漂移（Drift）：<br>
+$$<br>
+\begin{aligned}<br>
+\Delta(q(t)) &amp;= \mathbb{E}[L(q(t+1))-L(q(t))|q(t)] \<br>
+&amp;\le \frac{1}{2}\mathbb{E}[(q(t)+A^{min}-a^t)^2-q^2(t)|q(t)]\<br>
+&amp;(带入积压函数变化公式) \<br>
+&amp;= \frac{1}{2}(A^{min}-a^t)^2+q(t)\mathbb{E}[(A^{min}-a^t)|q(t)] \<br>
+&amp;(展开得到) \<br>
+&amp;\le B+q(t)\mathbb{E}[(A^{min}-a^t)|q(t)], \<br>
+&amp;更换常数<br>
+\end{aligned}<br>
+$$<br>
+B的定义为$B = \frac{1}{2}(A^{min}-a^{min})^2$，是常数，$a^{min}$代表所有时槽的平均精度中最低的那个*（历史经验数据吗）*。</p>
+<p>将李雅普诺夫漂移<strong>加入到众包利润的优化函数</strong>中，定义<strong>带惩罚项的优化目标</strong>为<br>
+$$<br>
+\Delta(q(t))-V·\mathbb{E}[U^t|q(t)],<br>
+$$<br>
+这里的$V$是正参数，用来调节分析精度的提升和众包利润之间的balance，在论文中有具体证明$V$的线性变化会引起队列积压量的线性变化。</p>
+<p>将$\Delta(q(t))$展开得到<br>
+$$<br>
+\Delta(q(t))-V·\mathbb{E}[U^t|q(t)] \le \<br>
+B+q(t)\mathbb{E}[A^{min}-a^t|q(t)]-V·\mathbb{E}[U^t|q(t)]<br>
+$$<br>
+与其直接最小化带惩罚项的优化目标，我们选择最小化这个优化目标的上界，也就是：<br>
+$$<br>
+\mathbb{P}<em>2:\underset{x,f}{max}\ \ q(t)·a^t+V·U^t \<br>
+s.t.还是前文中的s.t.但不包括最后的长期准确度平均需要大于A^{min} \<br>
+因为准确度的要求已经被加入到了优化目标中 \<br>
+当积压量q(t)较大时，则需要更加注意对于平均准确率a^t的优化 \<br>
+$$<br>
+现在对于新问题的求解就只需要当前状态的输入就可以了。将$\mathbb{P}<em>2$展开有：<br>
+$$<br>
+\mathbb{P}<em>2:\underset{x,f}{max}\sum</em>{m=1}^{M^t}\sum</em>{k=1}^{K_m^t}H^t(m,k)\<br>
+=\sum</em>{m=1}^{M^t}\sum_{k=1}^{K_m^t}\left{ \frac{q(t)a_{m,k}^t}{|M^t||K^t_m|}+V[G_m^t(a_{m,k}^t)-\sum_{j=1}^{|\mathcal{J}^t|}\sum_{n=1}^{|\mathcal{N}<em>j^t|}C</em>{m,k,n}]\right}, \<br>
+左边将a^t展开为了所有子任务的求和平均\<br>
+右边将U^t展开为了任务精度报酬-支付工资\<br>
+$$<br>
+其中$C_{m,k,n}$可以继续展开为<br>
+$$<br>
+C_{m,k,n}=\omega_n(\mu_{m,n}^tx_{m,k,n}^tf_{m,k}^t+\gamma_{m,n}^t\alpha(x_{m,k,n}^t r_n)^2f_{m,k}^t)<br>
+$$<br>
+当worker的选择$x$固定后，可以独立地对每个子任务设置使用的帧率$f_{m,k}^t$，使得每个子任务的最大的$H^t(m,k)$相加得到目标函数整体的最大值。如何求解呢，在固定worker的选择后，定义集合<br>
+$$<br>
+\mathcal{F}<em>{m,k}^t={f</em>{m,k}^t|\partial H^t(m,k)/\partial f_{m,k}^t=0},<br>
+$$<br>
+也就是最优解的帧率集合，解得<br>
+$$<br>
+f_{m,k}^t=\underset{f_{m,k}^t\in \mathcal{F}^t_{m,k}∪{1,F_m^t}}{arg\ max}H^t(m,k)<br>
+$$</p>
+<p>在确定worker的分配以后，$\mathbb{P}<em>2$就可以对每个子任务单独计算了，我们假定$H^t(m,k)$的值为$z</em>{m,k}^t$，展开$H^t(m,k)$中的$a^t$得到类似回报函数的表达式<br>
+$$<br>
+z_{m,k}^t(n,f_{m,f}^t)=\frac{q(t)\epsilon_m^t(r_n)\phi_m^t(f_{m,k}^t)}{|M^t||K_m^t|}+V[G_m^t(a_{m,k}^t)-\omega_n(\mu_{m,n}^tf_{m,k}^t+C_n^d\gamma_{m,n}^t\alpha(r_n)^2f_{m,k}^t)] \<br>
+由于每个子任务只会分配给某一个worker\<br>
+所以a^t的展开式中的r_n求和项就变成对应worker的r_n了<br>
+$$<br>
+由于$z_{m,k}^t(n,f_{m,f}^t)$的值依赖于$\mu_{m,n}^t$和$\gamma_{m,n}^t$，因此采用多臂赌博机算法</p>
+<h3>多臂赌博机</h3>
+<h4>为什么采用</h4>
+<p>多臂赌博机（Multi-Armed Bandit, MAB）方法是一种用于在不确定环境中进行决策的经典算法框架，特别适合处理探索和利用之间的权衡问题。由于两个随机变量$\mu_{m,n}^t$和$\gamma_{m,n}^t$是随机的或动态变化的，因此需要通过一种机制来动态学习这些值，多臂赌博机的核心目标正是通过不断尝试不同的探索，并在获得反馈后调整选择策略，从而在不确定性条件下找到最优解。</p>
+<ul>
+<li>
+<p><strong>无需假设随机变量$\mu_{m,n}^t$和$\gamma_{m,n}^t$的具体分布，只需通过采样更新即可逐步改进策略</strong>。</p>
+</li>
+<li>
+</li></ul>
+<h4>算法流程</h4>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/a5a576e1-9cf5-4781-bff1-6a4ba30e27d6"><img src="https://github.com/user-attachments/assets/a5a576e1-9cf5-4781-bff1-6a4ba30e27d6" alt="image-20241223174449258" style="max-width: 100%;"></a></p>
+<ol>
+<li>
+<p>输入任务帧率限制$F_m^t$，最小精度$A^{min}$，能耗定价$\omega_n$，准确率回报函数$G_m^t$</p>
+</li>
+<li>
+<p>从未完成的子任务集合$\mathcal{L}<em>m^t$中选择一个子任务$s</em>{m,k}^t$，表示<strong>即将对该任务进行分配</strong></p>
+</li>
+<li>
+<p>对worker状态进行检查，<strong>如果存在新的worker $\bar n$</strong>，则直接将任务分发给$\bar n$并且将观察到的$\bar n$的传输能耗随机变量和计算能耗随机变量 $\widetilde\mu_{m,\bar n}^t$和 $\widetilde\gamma_{m,\bar n}^t$赋值给$\bar n$的 $\bar \mu_{m,\bar n}^t$和 $\bar \gamma_{m,\bar n}^t$，同时将该worker已完成任务数 $\theta_{m,\bar n}^t$设为1（也就是老虎机被玩的次数）并且更新所有已完成的任务数（也就是全局玩老虎机的次数）</p>
+</li>
+<li>
+<p>如果所有worker都已经有随机变量的记录了，则计算让$z_{m,k}^t$最大化的$\bar n$和$\bar f$。</p>
+<blockquote>
+<p>由于之前提到了优化目标已经是最大化$z_{m,k}^t$，因此这里可以将$z_{m,n}^t$视作reward。这里还需要加上置信度上界，也就是式子中的$\sqrt{\frac{2\ ln\ \mu^t_{m,n}}{\theta_{m,n}^t}}$。它是对不确定性的度量，当某个worker选择的次数越多，那么它的$\theta_{m,n}^t$就会越大，使得不确定性减小；同样的，当其他worker不断被选择，那么式中的$\mu_{m,n}^t$就会越大，使得不确定性增大。自然对数是对于时间推移的模拟，也就是随着时间增大，对不确定性的影响将会越来越小。因此，具有较低reward的worker和已经被选择了更多次的worker就会更不容易被选中。</p>
+</blockquote>
+<p>将子任务分配给选出的worker $\bar n$，并且得到那个子任务下worker $\bar n$的传输能耗和计算能耗的随机变量 $\widetilde\mu_{m,\bar n}^t$和 $\bar \gamma_{m,\bar n}^t$，随后按照比例对worker 的$\bar \mu_{m,\bar n}^t$和 $\bar \gamma_{m,\bar n}^t$进行更新，比例如下：<br>
+$$<br>
+\bar \mu_{m,\bar n}^t \leftarrow \frac{\bar \mu_{m,\bar n}^t\theta_{m,\bar n}^t+\widetilde \mu_{m,\bar n}^t}{\theta_{m,\bar n}^t+1}  \<br>
+\bar \gamma_{m,\bar n}^t \leftarrow \frac{\bar \gamma_{m,\bar n}^t\theta_{m,\bar n}^t+\widetilde \gamma_{m,\bar n}^t}{\theta_{m,\bar n}^t+1}  \<br>
+$$<br>
+最后更新该worker被选择的次数 $\theta_{m,\bar n}^t \leftarrow \theta_{m,\bar n}^t +1$</p>
+</li>
+<li>
+<p>输出子任务$s_{m,k}^t$的选择策略以及对应的reward $z_{m,k}^t(\bar \mu_{m,\bar n}^t,\bar \gamma_{m,\bar n}^t)$。</p>
+</li>
+</ol>
+<h2>实验部分</h2>
+<h3>实验设置</h3>
+<p>数据集来自AI City Datasets 2019的视频，使用YOLOv3进行视频分析并且与其他算法进行对比，输入帧的大小包括360p，540p，720p，840p，960p，1080p，原始帧率30fps</p>
+<p>worker的可用性模拟来自于Users Active Time Prediction数据集，并且将worker的计算能耗设定为 $N(5,0.5)$ 焦耳每帧， 传输能耗设定为 $N(5,0.5) \times 10^{-6}$ 焦耳，并且设置 $\alpha = 1$，$\omega_n ∼ U\ (0,1)$。</p>
+<p>作者将自己的算法和4种备选方案进行对比，分别是：</p>
+<ul>
+<li>利润优先：忽视众包平台承诺的准确率约束，只单纯追求最大利润</li>
+<li>精度优先：忽视众包平台的利润，只追求每个时间槽的最大准确率</li>
+<li>探索优先：在多臂赌博机中仍然会学习能量消耗率，但系数的设置会让多臂赌博机更倾向于策略空间的探索策略</li>
+<li>利用优先：在多臂赌博机中仍然会学习能量消耗率，但系数的设置会让多臂赌博机更倾向于当前保守的探索策略</li>
+<li>文中的策略（LOL）</li>
+<li>传统赌博机模型（LOL-M）</li>
+</ul>
+<h3>实验结果</h3>
+<h4>动态调整的帧率和分辨率</h4>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/ea244af7-c425-43bb-a3dd-3723b1866eec"><img src="https://github.com/user-attachments/assets/ea244af7-c425-43bb-a3dd-3723b1866eec" alt="image-20241224011518610" style="max-width: 100%;"></a></p>
+<p>在测试样例中一共包含两个视频分析任务，他们的前20时槽和后20时槽的分析目标大小不同，因此需要采用变化的分辨率，并且前后目标运动的速度也不一样，因此帧率也需要进行动态的调整。（大目标采用低分辨率，慢运动速度采用低帧率）</p>
+<h4>参数影响</h4>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/12c5e58f-908c-4c7f-8b4a-10b23152209f"><img src="https://github.com/user-attachments/assets/12c5e58f-908c-4c7f-8b4a-10b23152209f" alt="image-20241224012113400" style="max-width: 100%;"></a></p>
+<p>图$a$展示的是$V$（精度和利润balance中对于利润的重视程度）对于队列积压平衡的影响，可以看到$V$越大，就越需要更大的时间进行平衡，$V$减小，则会更加注意完成的准确性，使得队列更容易趋于稳定。</p>
+<p>图$b$展示的是$A^{min}$（众包平台承诺的准确度标准）对于队列积压平衡的影响，可以看到$A^{min}$较高时，就更容易造成队列积压，因此最终收敛值就很大，$A^{min}$较小时，则容易满足精度约束从而造成更少的积压，因此最终收敛值就很小。</p>
+<p>图$c,d$展示的是在不同worker数目和子任务数目下LOL与其他两种对比算法的利润和精确度区别。可以发现<strong>LOL表现类似于两种版本的平均体</strong>，并且相比于利润优先的版本，LOL基本可以保证精度领先的情况下获取到相同的利润。</p>
+<h4>子任务选择上的性能对比</h4>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/c8376d44-b893-4189-a8f2-666f81bcc6ea"><img src="https://github.com/user-attachments/assets/c8376d44-b893-4189-a8f2-666f81bcc6ea" alt="image-20241224014933826" style="max-width: 100%;"></a></p>
+<p>图$a$展示了worker不同的variance（也就是计算能耗和传输能耗分布的方差值）下选择到次优（非最优）worker的概率（模型对于每个worker都已经执行过了一次子任务后）。可以发现当方差为0时，赌博机学习到的是精准的能耗随机变量，因此总是能够选出最优的worker，方差非0时选择次优worker的概率也会随着LOL的学习次数急剧下降。</p>
+<p>图$b,c$展示了不同worker和子任务数目，给子任务选择worker来获取更高的Goal Value的场景下，相比于探索优先和保守策略，LOL都有巨大的优势（平均提升68%）。</p>
+<h4>和原始赌博机算法的对比</h4>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/8b225b47-d239-4c0e-a8f5-4560c0038288"><img src="https://github.com/user-attachments/assets/8b225b47-d239-4c0e-a8f5-4560c0038288" alt="image-20241224020700240" style="max-width: 100%;"></a></p>
+<p>这里引入了worker可用性的变动，在15，30 Epoch 的时候最优worker会离开，并且加入新的最优worker。由于原始的赌博机算法在出现worker（也就是赌博机）变动的时候会重启，而作者的赌博机保留了worker对于随机变量和完成任务的记录，因此LOL相比LOL-M很快就能找到最优的工人并且得到更高的目标函数值。</p>
+<h4>作者工作</h4>
+<p>整个问题属于非线性整数规划，考虑了视频的资源质量权衡和工人的动态可用性，将长期时间对精度的约束使用李雅普诺夫优化方法转化为子任务最优化问题，并且使用波动多臂老虎机来学习预测资源使用的随机性，根据worker的动态可用性和配置以最小资源消耗将任务进行分配，实现平台长期的利润最大化。</p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://nexor-source.github.io">马越's Blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","nexor-source/nexor-source.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+
+
+</script>
+<script>MathJax = {tex: {inlineMath: [["$", "$"]]}};</script><script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</html>
