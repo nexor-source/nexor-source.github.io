@@ -23,6 +23,7 @@
     <a class="brand" href="#top" aria-label="返回首页">MY<span>.</span></a>
     <nav class="nav" aria-label="主导航">
       <a href="#projects">项目</a>
+      <a href="#skills">技能</a>
       <a href="#about">关于</a>
       <a href="notes/">笔记</a>
     </nav>
@@ -62,52 +63,110 @@
 
     <section class="projects section-shell" id="projects">
       <div class="section-heading reveal">
-        <p class="section-index">01 / SELECTED WORK</p>
-        <h2>精选项目</h2>
-        <p>从深度学习实验到游戏模组，记录把问题拆解并落地的过程。</p>
+        <p class="section-index">01 / FEATURED CASE</p>
+        <h2>代表项目</h2>
+        <p>比起项目数量，我更想展示一个从数据、算法到部署完整落地的系统。</p>
       </div>
 
-      <div class="project-grid">
-        <article class="project-card project-featured reveal">
-          <div class="project-number">01</div>
-          <div class="project-body">
-            <div class="project-tags"><span>Python</span><span>CNN</span><span>Signal Processing</span></div>
-            <h3>ECG Sleep Staging</h3>
-            <p>仅使用心电信号完成睡眠分期任务，通过卷积神经网络进行建模、评估与结果可视化。</p>
-            <a href="https://github.com/nexor-source/ECG-Sleep-staging" target="_blank" rel="noreferrer">查看源码 <span aria-hidden="true">↗</span></a>
-          </div>
-          <div class="project-mark" aria-hidden="true">ECG</div>
-        </article>
+      <article class="case-study reveal">
+        <header class="case-intro">
+          <p class="case-label">COMPUTER VISION · END-TO-END SYSTEM</p>
+          <h3>无人机多目标<br>识别预警系统</h3>
+          <p>面向复杂环境中的实时视频流，完成目标检测、持续跟踪、坐标回传、任务调度与告警推送。</p>
+          <div class="project-tags"><span>YOLOv8-L</span><span>DeepSORT</span><span>ReID</span><span>RTSP</span><span>Flask</span><span>WebSocket</span></div>
+        </header>
 
-        <article class="project-card reveal">
-          <div class="project-number">02</div>
-          <div class="project-body">
-            <div class="project-tags"><span>C#</span><span>Unity</span><span>Game Mod</span></div>
-            <h3>Random Size Player</h3>
-            <p>为《Lethal Company》制作的角色与家具尺寸模组，支持配置、随机分布和多人同步。</p>
-            <a href="https://github.com/nexor-source/RandomSizePlayer" target="_blank" rel="noreferrer">查看源码 <span aria-hidden="true">↗</span></a>
-          </div>
-        </article>
+        <div class="case-metrics" aria-label="项目指标">
+          <div><strong>≈45<small>ms</small></strong><span>单帧推理延迟</span></div>
+          <div><strong>90<small>%+</small></strong><span>轨迹 ID 稳定性</span></div>
+          <div><strong>4<small>类</small></strong><span>战场目标数据集</span></div>
+        </div>
 
-        <article class="project-card reveal">
-          <div class="project-number">03</div>
-          <div class="project-body">
-            <div class="project-tags"><span>Python</span><span>OpenCV</span><span>Automation</span></div>
-            <h3>AutoBard</h3>
-            <p>基于颜色检测和边缘检测的自动演奏工具，将视觉识别与键盘控制组合成完整工作流。</p>
-            <a href="https://github.com/nexor-source/AutoBard" target="_blank" rel="noreferrer">查看源码 <span aria-hidden="true">↗</span></a>
-          </div>
-        </article>
+        <div class="case-flow" aria-label="项目工作流">
+          <div><span>01</span><strong>数据管线</strong><p>多源侦察视频采集与标注，针对夜间、遮挡等复杂条件设计增强策略。</p></div>
+          <div><span>02</span><strong>检测优化</strong><p>优化 YOLOv8-L，通过稀疏化、半精度推理和类别重加权兼顾速度与小目标召回。</p></div>
+          <div><span>03</span><strong>稳定跟踪</strong><p>调优 DeepSORT ReID，引入姿态信息进行漂移校正，支持跨镜轨迹关联。</p></div>
+          <div><span>04</span><strong>系统部署</strong><p>使用 Flask 与 WebSocket 管理多路 RTSP 流、任务调度和告警，并部署至 GPU 服务器。</p></div>
+        </div>
+      </article>
+
+      <div class="other-builds reveal">
+        <div class="other-builds-title"><span>OTHER BUILDS</span><p>公开仓库中的小型实验与兴趣项目</p></div>
+        <a href="https://github.com/nexor-source/ECG-Sleep-staging" target="_blank" rel="noreferrer"><strong>ECG Sleep Staging</strong><span>Python · CNN · Signal</span><i>↗</i></a>
+        <a href="https://github.com/nexor-source/RandomSizePlayer" target="_blank" rel="noreferrer"><strong>Random Size Player</strong><span>C# · Unity · Mod</span><i>↗</i></a>
+        <a href="https://github.com/nexor-source/AutoBard" target="_blank" rel="noreferrer"><strong>AutoBard</strong><span>Python · OpenCV · Automation</span><i>↗</i></a>
+      </div>
+    </section>
+
+    <section class="skills section-shell" id="skills">
+      <div class="section-heading reveal">
+        <p class="section-index">02 / SKILL MAP</p>
+        <h2>技能树</h2>
+        <p>不是工具清单，而是“能力 - 证据 - 下一步”的长期地图，可直接作为简历内容参考。</p>
       </div>
 
-      <a class="all-projects reveal" href="https://github.com/nexor-source?tab=repositories" target="_blank" rel="noreferrer">
-        查看全部 GitHub 项目 <span aria-hidden="true">→</span>
-      </a>
+      <div class="skill-legend reveal" aria-label="技能状态说明">
+        <span><i class="level-strong"></i>核心实践</span>
+        <span><i class="level-applied"></i>有项目经验</span>
+        <span><i class="level-growing"></i>正在深化</span>
+      </div>
+
+      <div class="skill-tree reveal">
+        <div class="tree-root">
+          <small>ROOT</small>
+          <strong>智能系统工程</strong>
+          <span>计算机技术硕士 · 人工智能本科</span>
+        </div>
+
+        <div class="tree-branches">
+          <article class="tree-branch">
+            <header><span>01</span><div><small>CORE</small><h3>计算机视觉</h3></div></header>
+            <ul class="skill-nodes">
+              <li data-level="strong"><div><strong>目标检测</strong><span>YOLOv8-L · 小目标检测</span></div><em>核心实践</em></li>
+              <li data-level="strong"><div><strong>多目标跟踪</strong><span>DeepSORT · ReID · 轨迹关联</span></div><em>核心实践</em></li>
+              <li data-level="applied"><div><strong>模型优化</strong><span>稀疏化 · FP16 · 类别重加权</span></div><em>项目经验</em></li>
+              <li data-level="applied"><div><strong>数据工程</strong><span>采集标注 · 场景增强 · 评估</span></div><em>项目经验</em></li>
+            </ul>
+          </article>
+
+          <article class="tree-branch">
+            <header><span>02</span><div><small>ENGINEERING</small><h3>系统落地</h3></div></header>
+            <ul class="skill-nodes">
+              <li data-level="strong"><div><strong>Python 工程</strong><span>建模 · 数据处理 · 自动化</span></div><em>核心实践</em></li>
+              <li data-level="applied"><div><strong>实时视频服务</strong><span>RTSP · Flask · WebSocket</span></div><em>项目经验</em></li>
+              <li data-level="applied"><div><strong>推理部署</strong><span>GPU · 多路流 · 任务调度</span></div><em>项目经验</em></li>
+              <li data-level="growing"><div><strong>C / C++</strong><span>基础语法 · 系统能力</span></div><em>正在深化</em></li>
+            </ul>
+          </article>
+
+          <article class="tree-branch">
+            <header><span>03</span><div><small>RESEARCH</small><h3>研究基础</h3></div></header>
+            <ul class="skill-nodes">
+              <li data-level="strong"><div><strong>数学与算法</strong><span>优化 · 矩阵分析 · 离散数学</span></div><em>核心基础</em></li>
+              <li data-level="applied"><div><strong>云边协同</strong><span>任务调度 · 在线学习</span></div><em>研究方向</em></li>
+              <li data-level="applied"><div><strong>技术调研</strong><span>英文论文 · 实验复现 · 记录</span></div><em>持续实践</em></li>
+              <li data-level="growing"><div><strong>强化学习</strong><span>课程基础 · 场景探索</span></div><em>正在深化</em></li>
+            </ul>
+          </article>
+
+          <article class="tree-branch">
+            <header><span>04</span><div><small>MAKING</small><h3>创意开发</h3></div></header>
+            <ul class="skill-nodes">
+              <li data-level="applied"><div><strong>Unity Mod</strong><span>C# · BepInEx · 配置同步</span></div><em>项目经验</em></li>
+              <li data-level="applied"><div><strong>Web 界面</strong><span>HTML · CSS · JavaScript</span></div><em>项目经验</em></li>
+              <li data-level="applied"><div><strong>视觉自动化</strong><span>OpenCV · 检测 · 控制</span></div><em>项目经验</em></li>
+              <li data-level="growing"><div><strong>开源协作</strong><span>文档 · 发布 · 维护</span></div><em>持续积累</em></li>
+            </ul>
+          </article>
+        </div>
+      </div>
+
+      <p class="skill-footnote reveal">更新原则：只有能给出课程、项目、作品或结果作为证据的技能，才进入这棵树。</p>
     </section>
 
     <section class="about section-shell" id="about">
       <div class="section-heading reveal">
-        <p class="section-index">02 / ABOUT</p>
+        <p class="section-index">03 / ABOUT</p>
         <h2>关于我</h2>
       </div>
       <div class="about-grid">
@@ -116,16 +175,16 @@
           <p>持续学习，也持续交付。</p>
         </div>
         <div class="capability-list reveal">
-          <div><span>01</span><strong>软件工程</strong><p>Python · C++ · C# · Qt</p></div>
-          <div><span>02</span><strong>智能系统</strong><p>深度学习 · 计算机视觉 · 信号处理</p></div>
-          <div><span>03</span><strong>兴趣实践</strong><p>游戏开发 · 自动化工具 · 技术写作</p></div>
+          <div><span>01</span><strong>工程主线</strong><p>计算机视觉 · 实时推理 · 系统部署</p></div>
+          <div><span>02</span><strong>研究方向</strong><p>云边协同 · 任务调度 · 在线学习</p></div>
+          <div><span>03</span><strong>兴趣实践</strong><p>游戏 Mod · 自动化工具 · 技术写作</p></div>
         </div>
       </div>
     </section>
 
     <section class="notes-callout section-shell reveal">
       <div>
-        <p class="section-index">03 / NOTES</p>
+        <p class="section-index">04 / NOTES</p>
         <h2>论文阅读，仍然保留。</h2>
         <p>它不再是首页的全部，但仍是学习路径的一部分。目前收录视频分析、边缘计算与众包调度方向的阅读记录。</p>
       </div>
