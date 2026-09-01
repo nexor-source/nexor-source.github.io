@@ -1,6 +1,8 @@
 {
-    "title":"马越's Blog",
-    "subTitle":"记录学习生活",
-    "avatarUrl":"https://github.githubassets.com/favicons/favicon.svg",
+    "title":"马越的研究笔记",
+    "displayTitle":"研究笔记",
+    "subTitle":"视频分析、边缘计算与众包调度的论文阅读记录",
+    "avatarUrl":"https://github.com/nexor-source.png",
+    "homeUrl":"https://nexor-source.github.io/notes",
     "GMEEK_VERSION":"last"
 }

@@ -49,9 +49,25 @@ jobs:
       - name: Generate new html
         run: |
           cp -r ./* /opt/Gmeek/
+          # Gmeek expects its current blog output at /opt/Gmeek/docs.
+          # Only seed it with the notes site, not the custom portfolio homepage.
+          rm -rf /opt/Gmeek/docs
+          mkdir -p /opt/Gmeek/docs
+          if [ -d "${{ github.workspace }}/docs/notes" ]; then
+            cp -a ${{ github.workspace }}/docs/notes/. /opt/Gmeek/docs/
+          fi
           cd /opt/Gmeek/
           python Gmeek.py ${{ secrets.GITHUB_TOKEN }} ${{ github.repository }} --issue_number '${{ github.event.issue.number }}'
-          cp -a /opt/Gmeek/docs ${{ github.workspace }} 
+          rm -rf ${{ github.workspace }}/docs
+          mkdir -p ${{ github.workspace }}/docs/notes
+          cp -a /opt/Gmeek/docs/. ${{ github.workspace }}/docs/notes/
+          cp -a ${{ github.workspace }}/homepage/. ${{ github.workspace }}/docs/
+
+          # Keep previously published article and archive URLs working.
+          mkdir -p ${{ github.workspace }}/docs/post
+          cp -a ${{ github.workspace }}/docs/notes/post/. ${{ github.workspace }}/docs/post/
+          cp ${{ github.workspace }}/docs/notes/tag.html ${{ github.workspace }}/docs/tag.html
+          cp ${{ github.workspace }}/docs/notes/rss.xml ${{ github.workspace }}/docs/rss.xml
           cp -a /opt/Gmeek/backup ${{ github.workspace }} 
           cp /opt/Gmeek/blogBase.json ${{ github.workspace }} 
           
