@@ -16,3 +16,32 @@ if ("IntersectionObserver" in window) {
 } else {
   revealItems.forEach((item) => item.classList.add("is-visible"));
 }
+
+const skillNodes = document.querySelectorAll(".skill-node");
+
+skillNodes.forEach((node) => {
+  const button = node.querySelector(".skill-node-toggle");
+
+  button.addEventListener("click", () => {
+    const willOpen = !node.classList.contains("is-open");
+
+    skillNodes.forEach((otherNode) => {
+      otherNode.classList.remove("is-open");
+      otherNode.querySelector(".skill-node-toggle").setAttribute("aria-expanded", "false");
+    });
+
+    if (willOpen) {
+      node.classList.add("is-open");
+      button.setAttribute("aria-expanded", "true");
+    }
+  });
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
+
+  skillNodes.forEach((node) => {
+    node.classList.remove("is-open");
+    node.querySelector(".skill-node-toggle").setAttribute("aria-expanded", "false");
+  });
+});

@@ -102,66 +102,145 @@
       <div class="section-heading reveal">
         <p class="section-index">02 / SKILL MAP</p>
         <h2>技能树</h2>
-        <p>不是工具清单，而是“能力 - 证据 - 下一步”的长期地图，可直接作为简历内容参考。</p>
+        <p>按实际使用深度整理的能力地图。悬停或点击节点，可查看项目证据与能力边界。</p>
       </div>
 
       <div class="skill-legend reveal" aria-label="技能状态说明">
         <span><i class="level-strong"></i>核心实践</span>
         <span><i class="level-applied"></i>有项目经验</span>
-        <span><i class="level-growing"></i>正在深化</span>
+        <span><i class="level-refresh"></i>接触过·需复习</span>
+        <span><i class="level-growing"></i>正在学习</span>
       </div>
 
       <div class="skill-tree reveal">
         <div class="tree-root">
           <small>ROOT</small>
-          <strong>智能系统工程</strong>
-          <span>计算机技术硕士 · 人工智能本科</span>
+          <strong>技术实践地图</strong>
+          <span>证据优先 · 边界明确 · 持续更新</span>
         </div>
 
         <div class="tree-branches">
           <article class="tree-branch">
-            <header><span>01</span><div><small>CORE</small><h3>计算机视觉</h3></div></header>
+            <header><span>01</span><div><small>CORE</small><h3>人工智能 · 视觉</h3></div></header>
             <ul class="skill-nodes">
-              <li data-level="strong"><div><strong>目标检测</strong><span>YOLOv8-L · 小目标检测</span></div><em>核心实践</em></li>
-              <li data-level="strong"><div><strong>多目标跟踪</strong><span>DeepSORT · ReID · 轨迹关联</span></div><em>核心实践</em></li>
-              <li data-level="applied"><div><strong>模型优化</strong><span>稀疏化 · FP16 · 类别重加权</span></div><em>项目经验</em></li>
-              <li data-level="applied"><div><strong>数据工程</strong><span>采集标注 · 场景增强 · 评估</span></div><em>项目经验</em></li>
+              <li class="skill-node" data-level="strong">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-pytorch"><span><strong>PyTorch 模型训练</strong><small>Conv2D / Conv3D · ReLU · Optimizer</small></span><em>核心实践</em></button>
+                <div class="skill-detail" id="skill-pytorch"><p>多次独立搭建并训练神经网络，完成过数据划分、训练、验证、测试与结果评估。</p><p><b>边界</b>：熟悉基础训练流程；较新的训练策略与 API 需要查阅文档。</p></div>
+              </li>
+              <li class="skill-node" data-level="strong">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-detection"><span><strong>目标检测与跟踪</strong><small>YOLOv8-L · DeepSORT · ReID</small></span><em>核心实践</em></button>
+                <div class="skill-detail" id="skill-detection"><p>完成无人机视角小目标检测与多目标轨迹关联，覆盖数据准备、训练、评估和部署。</p><p><b>证据</b>：无人机多目标识别系统。</p></div>
+              </li>
+              <li class="skill-node" data-level="applied">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-classification"><span><strong>图像分类</strong><small>多分类 · Softmax · 指标评估</small></span><em>项目经验</em></button>
+                <div class="skill-detail" id="skill-classification"><p>完成过多类别图像分类模型的搭建与训练，理解类别数、输出维度与 Softmax 推理结果之间的关系。</p></div>
+              </li>
+              <li class="skill-node" data-level="applied">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-data"><span><strong>数据准备</strong><small>公开数据集 · 手动标注 · 数据增强</small></span><em>项目经验</em></button>
+                <div class="skill-detail" id="skill-data"><p>使用过公开数据集与标注工具，完成数据标注并实践常见图像增强方法。</p><p><b>边界</b>：以数据使用和标注为主，较少从零组织大规模采集。</p></div>
+              </li>
+              <li class="skill-node" data-level="applied">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-nlos"><span><strong>非视域成像仿真</strong><small>3D 模型 · 射线传播 · 回波模拟</small></span><em>项目经验</em></button>
+                <div class="skill-detail" id="skill-nlos"><p>基于公开 3D 模型构建仿真数据，模拟射线经墙面反射后形成回波的过程。</p><p><b>边界</b>：经验集中于仿真数据，没有真实采集链路。</p></div>
+              </li>
+              <li class="skill-node" data-level="refresh">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-optimization"><span><strong>模型轻量化</strong><small>L1 稀疏化 · FP16 · 剪枝理论</small></span><em>接触过</em></button>
+                <div class="skill-detail" id="skill-optimization"><p>理解 L1 正则化促进稀疏、FP16 降低存储与计算成本的基本思路。</p><p><b>边界</b>：剪枝停留在理论理解；容器化部署尚未形成稳定实践。</p></div>
+              </li>
             </ul>
           </article>
 
           <article class="tree-branch">
-            <header><span>02</span><div><small>ENGINEERING</small><h3>系统落地</h3></div></header>
+            <header><span>02</span><div><small>RESEARCH</small><h3>云边协同 · 调度</h3></div></header>
             <ul class="skill-nodes">
-              <li data-level="strong"><div><strong>Python 工程</strong><span>建模 · 数据处理 · 自动化</span></div><em>核心实践</em></li>
-              <li data-level="applied"><div><strong>实时视频服务</strong><span>RTSP · Flask · WebSocket</span></div><em>项目经验</em></li>
-              <li data-level="applied"><div><strong>推理部署</strong><span>GPU · 多路流 · 任务调度</span></div><em>项目经验</em></li>
-              <li data-level="growing"><div><strong>C / C++</strong><span>基础语法 · 系统能力</span></div><em>正在深化</em></li>
+              <li class="skill-node" data-level="strong">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-bandit"><span><strong>在线学习与多臂老虎机</strong><small>经验更新 · 收益估计 · 策略选择</small></span><em>核心实践</em></button>
+                <div class="skill-detail" id="skill-bandit"><p>用历史反馈持续更新不同选择的期望收益，并据此平衡探索与利用。</p><p><b>证据</b>：硕士阶段云边协同任务调度研究。</p></div>
+              </li>
+              <li class="skill-node" data-level="strong">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-scheduling"><span><strong>车辆任务调度</strong><small>任务分配 · 异质收益分布</small></span><em>核心实践</em></button>
+                <div class="skill-detail" id="skill-scheduling"><p>在不同车辆具有不同收益分布的条件下，编写算法决定任务分配对象。</p></div>
+              </li>
+              <li class="skill-node" data-level="applied">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-simulation"><span><strong>Python 仿真实验</strong><small>基线对比 · 总收益评估</small></span><em>项目经验</em></button>
+                <div class="skill-detail" id="skill-simulation"><p>使用纯 Python 搭建调度实验环境，并以总收益与其他方法进行对比。</p><p><b>边界</b>：评价维度以总收益为主，尚未形成真实边缘设备部署。</p></div>
+              </li>
             </ul>
           </article>
 
           <article class="tree-branch">
-            <header><span>03</span><div><small>RESEARCH</small><h3>研究基础</h3></div></header>
+            <header><span>03</span><div><small>APPLIED AI</small><h3>大模型 · 信息检索</h3></div></header>
             <ul class="skill-nodes">
-              <li data-level="strong"><div><strong>数学与算法</strong><span>优化 · 矩阵分析 · 离散数学</span></div><em>核心基础</em></li>
-              <li data-level="applied"><div><strong>云边协同</strong><span>任务调度 · 在线学习</span></div><em>研究方向</em></li>
-              <li data-level="applied"><div><strong>技术调研</strong><span>英文论文 · 实验复现 · 记录</span></div><em>持续实践</em></li>
-              <li data-level="growing"><div><strong>强化学习</strong><span>课程基础 · 场景探索</span></div><em>正在深化</em></li>
+              <li class="skill-node" data-level="applied">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-local-llm"><span><strong>本地大模型应用</strong><small>LM Studio · DeepSeek · API</small></span><em>项目经验</em></button>
+                <div class="skill-detail" id="skill-local-llm"><p>通过 LM Studio 部署过 DeepSeek 系列模型，并用于本地机器翻译任务。</p><p><b>边界</b>：属于模型调用与应用集成，不包含训练或微调。</p></div>
+              </li>
+              <li class="skill-node" data-level="applied">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-translation"><span><strong>游戏文本翻译流水线</strong><small>C# · 文本抽取 · 分批翻译</small></span><em>项目经验</em></button>
+                <div class="skill-detail" id="skill-translation"><p>用 C# 抽取游戏页面文本资源，写入 TXT 后分条调用模型接口，再汇总翻译结果。</p></div>
+              </li>
+              <li class="skill-node" data-level="applied">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-retrieval"><span><strong>知识检索</strong><small>关键词索引 · 向量相似度 · Vector Store</small></span><em>项目经验</em></button>
+                <div class="skill-detail" id="skill-retrieval"><p>实现过关键词索引检索，并尝试通过向量库完成文本资料的相似度召回。</p><p><b>边界</b>：两种检索方式分别实践，尚未整合成统一检索链路。</p></div>
+              </li>
+              <li class="skill-node" data-level="applied">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-qqbot"><span><strong>QQ 问答机器人</strong><small>Python · 资料问答 · 服务器部署</small></span><em>项目经验</em></button>
+                <div class="skill-detail" id="skill-qqbot"><p>将基于资料检索的 QQ 问答机器人部署在 Windows Server 上运行。</p></div>
+              </li>
             </ul>
           </article>
 
           <article class="tree-branch">
-            <header><span>04</span><div><small>MAKING</small><h3>创意开发</h3></div></header>
+            <header><span>04</span><div><small>MAKING</small><h3>应用 · 游戏开发</h3></div></header>
             <ul class="skill-nodes">
-              <li data-level="applied"><div><strong>Unity Mod</strong><span>C# · BepInEx · 配置同步</span></div><em>项目经验</em></li>
-              <li data-level="applied"><div><strong>Web 界面</strong><span>HTML · CSS · JavaScript</span></div><em>项目经验</em></li>
-              <li data-level="applied"><div><strong>视觉自动化</strong><span>OpenCV · 检测 · 控制</span></div><em>项目经验</em></li>
-              <li data-level="growing"><div><strong>开源协作</strong><span>文档 · 发布 · 维护</span></div><em>持续积累</em></li>
+              <li class="skill-node" data-level="applied">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-qt"><span><strong>Qt6 上位机</strong><small>C++ · Signal / Slot · QTcpSocket</small></span><em>进行中</em></button>
+                <div class="skill-detail" id="skill-qt"><p>已实现 TCP 连接、断开、发送、接收与日志显示，并编写 Python 测试服务端。</p><p><b>下一步</b>：加入业务协议解析与更完整的状态管理。</p></div>
+              </li>
+              <li class="skill-node" data-level="applied">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-electron"><span><strong>Electron 联机棋类游戏</strong><small>自定义规则 · WebSocket · 打包测试</small></span><em>项目经验</em></button>
+                <div class="skill-detail" id="skill-electron"><p>设计多种棋子与消耗上限规则，通过 WebSocket 同步双方走子，完成打包和小范围测试。</p><p><b>边界</b>：尚未实现单机 AI 对战。</p></div>
+              </li>
+              <li class="skill-node" data-level="applied">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-unity"><span><strong>Unity Mod</strong><small>C# · BepInEx · Config</small></span><em>项目经验</em></button>
+                <div class="skill-detail" id="skill-unity"><p>基于 BepInEx 开发 Mod，通过配置文件提供可调整参数并改变运行效果。</p><p><b>边界</b>：未实现 ClientRPC / ServerRPC 多人同步。</p></div>
+              </li>
+              <li class="skill-node" data-level="applied">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-automation"><span><strong>游戏视觉自动化</strong><small>OpenCV · 视觉检测 · 输入控制</small></span><em>项目经验</em></button>
+                <div class="skill-detail" id="skill-automation"><p>根据游戏画面进行视觉检测并驱动自动控制，完成过 AutoBard 等实验项目。</p></div>
+              </li>
+              <li class="skill-node" data-level="refresh">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-small-builds"><span><strong>小型交互 Demo</strong><small>扫雷 · Python 视觉小说</small></span><em>早期实践</em></button>
+                <div class="skill-detail" id="skill-small-builds"><p>制作过 Web 扫雷和 Python 视觉小说 Demo，均做过小范围测试。</p><p><b>边界</b>：Web 项目以入门和 AI 辅助开发为主，未正式发布。</p></div>
+              </li>
+            </ul>
+          </article>
+
+          <article class="tree-branch tree-branch-learning">
+            <header><span>05</span><div><small>LEARNING</small><h3>知识基础 · 学习中</h3></div></header>
+            <ul class="skill-nodes">
+              <li class="skill-node" data-level="growing">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-database"><span><strong>MySQL / SQL</strong><small>查询 · 索引 · 事务 · 锁</small></span><em>正在学习</em></button>
+                <div class="skill-detail" id="skill-database"><p>已练习 JOIN、分组聚合、子查询、窗口函数，并学习 B+ 树、聚簇/二级索引、事务和隔离级别。</p><p><b>边界</b>：目前以课程与练习为主，尚无实际项目应用。</p></div>
+              </li>
+              <li class="skill-node" data-level="refresh">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-ml"><span><strong>机器学习基础</strong><small>决策树 · SVM · K-means · 特征工程</small></span><em>需复习</em></button>
+                <div class="skill-detail" id="skill-ml"><p>接触过分类、回归、聚类、特征工程及混淆矩阵指标，曾手写 K-means，也参加过数据分析比赛。</p><p><b>边界</b>：具备概念基础，公式与完整实践细节需要复习。</p></div>
+              </li>
+              <li class="skill-node" data-level="refresh">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-nlp"><span><strong>自然语言处理</strong><small>词向量 · RNN / LSTM · BERT</small></span><em>课程接触</em></button>
+                <div class="skill-detail" id="skill-nlp"><p>了解 One-hot、稠密词向量和序列模型，调用过 BERT；对 Attention、Transformer 与 QKV 有概念认识。</p><p><b>边界</b>：未手写或完整实践 Transformer，模型细节需要系统复习。</p></div>
+              </li>
+              <li class="skill-node" data-level="refresh">
+                <button class="skill-node-toggle" type="button" aria-expanded="false" aria-controls="skill-rl"><span><strong>强化学习</strong><small>Actor-Critic · 经验记录</small></span><em>课程接触</em></button>
+                <div class="skill-detail" id="skill-rl"><p>课程中接触过 Actor-Critic 与经验记录等概念。</p><p><b>边界</b>：除多臂老虎机外，强化学习知识目前需要重新学习，不作为可独立项目能力。</p></div>
+              </li>
             </ul>
           </article>
         </div>
       </div>
 
-      <p class="skill-footnote reveal">更新原则：只有能给出课程、项目、作品或结果作为证据的技能，才进入这棵树。</p>
+      <p class="skill-footnote reveal">标注原则：项目实践与课程了解分开呈现；不会把“用过代码”写成“独立掌握”。</p>
     </section>
 
     <section class="about section-shell" id="about">
